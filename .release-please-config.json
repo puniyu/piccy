@@ -83,6 +83,17 @@
           "jsonpath": "$.version"
         }
       ]
+    },
+    "piccy_node": {
+      "release-type": "rust",
+      "component": "app",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "package.json",
+          "jsonpath": "$.version"
+        }
+      ]
     }
   },
   "commit-search-depth": 50

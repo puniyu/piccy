@@ -105,5 +105,5 @@ jobs:
 #        with:
 #          name: "${{ env.APP_NAME }}-${{ matrix.platform.label }}"
 #          path: |
-#            nipaw_node/dist/${{ env.APP_NAME }}*.node
+#            piccy_node/dist/${{ env.APP_NAME }}*.node
 

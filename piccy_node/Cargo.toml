@@ -1,5 +1,5 @@
 [package]
-name = "piccy_core"
+name = "piccy_node"
 version = "0.1.0"
 authors.workspace = true
 license.workspace = true
@@ -9,9 +9,18 @@ repository.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 
+[lib]
+crate-type = ["cdylib"]
+
 [dependencies]
-image = { version = "0.25.8" }
-base64 = "0.22.1"
+napi = { version = "3.0.0", features = [] }
+napi-derive = "3.0.0"
 
 serde.workspace = true
 thiserror.workspace = true
+
+piccy_core = { path = "../piccy_core" }
+
+
+[build-dependencies]
+napi-build = "2"

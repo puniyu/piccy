@@ -1,0 +1,49 @@
+{
+  "name": "@puniyu-plugins/piccy",
+  "version": "0.1.0",
+  "description": "image tool",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "author": "Puniyu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/puniyu-plugins/piccy.git"
+  },
+  "license": "LGPL-3.0-or-later",
+  "keywords": [
+    "napi-rs",
+    "NAPI",
+    "N-API",
+    "Rust",
+    "node-addon",
+    "node-addon-api"
+  ],
+  "files": [
+    "dist"
+  ],
+  "napi": {
+    "binaryName": "piccy",
+    "targets": [
+      "x86_64-pc-windows-msvc",
+      "x86_64-apple-darwin",
+      "x86_64-unknown-linux-gnu",
+      "aarch64-unknown-linux-gnu",
+      "aarch64-apple-darwin"
+    ],
+    "dtsHeader": "// powered by piccy_core\n"
+  },
+  "engines": {
+    "node": ">= 12.22.0 < 13 || >= 14.17.0 < 15 || >= 15.12.0 < 16 || >= 16.0.0"
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release -p piccy_node --esm -o dist",
+    "prepublishOnly": "napi prepublish --no-gh-release",
+    "create-npm-dirs": "napi create-npm-dirs"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.2.0"
+  },
+  "packageManager": "pnpm@10.14.0"
+}
