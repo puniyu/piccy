@@ -1,0 +1,27 @@
+[workspace]
+members = [
+    "piccy_app"
+, "piccy_core"]
+resolver = "2"
+
+[workspace.package]
+authors = ["wuliya <3369906077@qq.com>"]
+license = "LGPL-3.0-only"
+readme = "README.md"
+homepage = "https://github.com/puniyu-plugins/piccy"
+repository = "https://github.com/puniyu-plugins/piccy"
+edition = "2024"
+rust-version = "1.88.0"
+
+[workspace.dependencies]
+thiserror = "2"
+
+[profile.dev]
+incremental = true
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
