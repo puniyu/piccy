@@ -1,0 +1,43 @@
+name: release
+on:
+  push:
+    branches:
+      - main
+  pull_request_target:
+  workflow_dispatch:
+
+
+permissions:
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    if: "!startsWith(github.head_ref, 'release-please')"
+    runs-on: ubuntu-latest
+    outputs:
+      node: ${{ steps.release-please.outputs['nipaw_node--release_created'] }}
+      github: ${{ steps.release-please.outputs['nipaw_github--release_created'] }}
+      gitee: ${{ steps.release-please.outputs['nipaw_gitee--release_created'] }}
+      gitcode: ${{ steps.release-please.outputs['nipaw_gitcode--release_created'] }}
+      cnb: ${{ steps.release-please.outputs['nipaw_cnb--release_created'] }}
+    steps:
+      - name: 获取token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: 运行 release-please-action
+        id: release-please
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+
