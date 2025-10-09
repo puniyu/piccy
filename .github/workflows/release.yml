@@ -19,11 +19,7 @@ jobs:
     if: "!startsWith(github.head_ref, 'release-please')"
     runs-on: ubuntu-latest
     outputs:
-      node: ${{ steps.release-please.outputs['nipaw_node--release_created'] }}
-      github: ${{ steps.release-please.outputs['nipaw_github--release_created'] }}
-      gitee: ${{ steps.release-please.outputs['nipaw_gitee--release_created'] }}
-      gitcode: ${{ steps.release-please.outputs['nipaw_gitcode--release_created'] }}
-      cnb: ${{ steps.release-please.outputs['nipaw_cnb--release_created'] }}
+      core: ${{ steps.release-please.outputs['piccy_node--release_created'] }}
     steps:
       - name: 获取token
         uses: actions/create-github-app-token@v2
@@ -40,4 +36,5 @@ jobs:
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
 
-
+  build-app:
+    uses: ./.github/workflows/build-app.yml
