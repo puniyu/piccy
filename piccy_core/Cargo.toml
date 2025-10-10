@@ -1,6 +1,7 @@
 [package]
 name = "piccy_core"
 version = "0.1.0"
+description = "a image toool"
 authors.workspace = true
 license.workspace = true
 readme.workspace = true

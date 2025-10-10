@@ -86,7 +86,7 @@
     },
     "piccy_node": {
       "release-type": "rust",
-      "component": "app",
+      "component": "node",
       "extra-files": [
         {
           "type": "json",
