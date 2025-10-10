@@ -20,13 +20,14 @@ concurrency:
 
 jobs:
   release:
-    if: github.actor != 'puniyu-plugins'
+    if: github.actor != 'puniyu-plugins[bot]'
     runs-on: ubuntu-latest
     outputs:
       core: ${{ steps.release-please.outputs['piccy_core--release_created'] }}
       app: ${{ steps.release-please.outputs['piccy_app--release_created'] }}
       app_tag_name: ${{ steps.release-please.outputs['piccy_app--tag_name'] }}
       node: ${{ steps.release-please.outputs['piccy_node--release_created'] }}
+      node_tag_name: ${{ steps.release-please.outputs['piccy_node--tag_name'] }}
     steps:
       - name: 获取token
         uses: actions/create-github-app-token@v2
@@ -86,19 +87,22 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: 下载构建产物
-        uses: actions/download-artifact@v5
+        uses: dawidd6/action-download-artifact@v11
         with:
-          pattern: piccy-app*
-          path: .
+          name: ^piccy-app.*
+          name_is_regexp: true
+          skip_unpack: true
 
       - name: 上传Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ steps.app-token.outputs.token }}
-          files: piccy-app/**
+          files: |
+            piccy-app-*
           tag_name: ${{ needs.release.outputs.app_tag_name }}
 
   build-npm-lib:
+    if: needs.release.outputs.node
     needs: release
     uses: ./.github/workflows/build-npm-lib.yaml
 
@@ -107,6 +111,13 @@ jobs:
     if: needs.release.outputs.node
     runs-on: ubuntu-latest
     steps:
+      - name: 获取token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: 下载npm包
         uses: actions/download-artifact@v5
         with:
@@ -135,3 +146,11 @@ jobs:
         working-directory: piccy-node
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 上传Release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          files: |
+            piccy-node/artifacts/piccy-node-*/piccy-node*.node
+          tag_name: ${{ needs.release.outputs.node_tag_name }}
