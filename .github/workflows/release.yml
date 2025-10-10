@@ -25,7 +25,7 @@ jobs:
     outputs:
       core: ${{ steps.release-please.outputs['piccy_core--release_created'] }}
       app: ${{ steps.release-please.outputs['piccy_app--release_created'] }}
-      app_tag_name: ${{ steps.release-please.outputs['piccy_app--release_tag_name'] }}
+      app_tag_name: ${{ steps.release-please.outputs['piccy_app--tag_name'] }}
       node: ${{ steps.release-please.outputs['piccy_node--release_created'] }}
     steps:
       - name: 获取token
