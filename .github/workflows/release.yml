@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
   release:
+    if: (!startsWith(github.head_ref, 'release-please'))
     runs-on: ubuntu-latest
     outputs:
       core: ${{ steps.release-please.outputs['piccy_core--release_created'] }}
@@ -66,21 +67,14 @@ jobs:
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_API_TOKEN }}
 
-  build-tauri-app-preview:
+  build-tauri-app:
     needs: release
-    if: needs.release.outputs.app != 'true'
-    uses: ./.github/workflows/build-tauri-app.yaml
-    secrets: inherit
-
-  build-tauri-app-release:
-    needs: release
-    if : needs.release.outputs.app
     uses: ./.github/workflows/build-tauri-app.yaml
     secrets: inherit
 
 
   publish-tauri-app:
-    needs: [ build-tauri-app-preview, build-tauri-app-release, release ]
+    needs: [ build-tauri-app, release ]
     if : needs.release.outputs.app
     runs-on: ubuntu-latest
     steps:
