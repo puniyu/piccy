@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/puniyu-plugins/piccy/compare/app-v0.2.1...app-v0.2.2) (2025-10-10)
+
+
+### 🐛 错误修复
+
+* **workflow:** 修正应用标签名称输出变量 ([e338b93](https://github.com/puniyu-plugins/piccy/commit/e338b932ee602fbab77f549e1d8b9b04fa84a786))
+
 ## [0.2.1](https://github.com/puniyu-plugins/piccy/compare/app-v0.2.0...app-v0.2.1) (2025-10-10)
 
 
