@@ -89,7 +89,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           pattern: piccy-app*
-          path: piccy-app/
+          path: .
 
       - name: 上传Release
         uses: softprops/action-gh-release@v2

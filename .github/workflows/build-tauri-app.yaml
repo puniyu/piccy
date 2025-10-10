@@ -60,7 +60,7 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ env.APP_NAME }}-${{ matrix.platform.label }}"
+          name: "${{ env.APP_NAME }}-app-${{ matrix.platform.label }}"
           path: |
             target/${{ matrix.platform.target }}/release/bundle/nsis/${{ env.APP_NAME }}*.exe
 
@@ -136,7 +136,7 @@ jobs:
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ env.APP_NAME }}-${{ matrix.platform.label }}"
+          name: "${{ env.APP_NAME }}-app-${{ matrix.platform.label }}"
           path: |
             target/${{ matrix.platform.target }}/release/bundle/deb/${{ env.APP_NAME }}*.deb
 
@@ -219,7 +219,7 @@ jobs:
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ env.APP_NAME }}-${{ matrix.platform.label }}"
+          name: "${{ env.APP_NAME }}-app-${{ matrix.platform.label }}"
           path: |
             piccy_app/gen/android/app/build/outputs/apk/universal/release/app-universal-release.apk
 
