@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/puniyu-plugins/piccy/compare/app-v0.2.2...app-v0.2.3) (2025-10-10)
+
+
+### 🔧 其他更新
+
+* **ci:** 更新构建产物名称格式 ([923c523](https://github.com/puniyu-plugins/piccy/commit/923c523157ebd88a45aa16762554b0ac11f4fb90))
+
 ## [0.2.2](https://github.com/puniyu-plugins/piccy/compare/app-v0.2.1...app-v0.2.2) (2025-10-10)
 
 
