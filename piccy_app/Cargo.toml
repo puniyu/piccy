@@ -21,3 +21,5 @@ piccy_core = { path = "../piccy_core" }
 
 thiserror.workspace = true
 anyhow = "1.0.100"
+tauri-plugin-fs = "2"
+tauri-plugin-dialog = "2"
