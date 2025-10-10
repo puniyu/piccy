@@ -13,7 +13,7 @@ import {LuFileImage, LuX} from "react-icons/lu"
 import {invoke} from '@tauri-apps/api/core';
 import {useEffect, useState} from "react";
 
-const image_info = async (image_data: number[]): Promise<ImageInfo> => {
+const image_info = async (image_data: Uint8Array): Promise<ImageInfo> => {
 	return await invoke('image_info', { imageData: image_data });
 };
 export default function App() {
@@ -68,7 +68,7 @@ export default function App() {
 					        onClick={async () => {
 						if (uploadedFile) {
 
-							const image_buffer = Array.from(new Uint8Array(uploadedFile.buffer))
+							const image_buffer =  new Uint8Array(uploadedFile.buffer);
 							const info = await image_info(image_buffer)
 							setImageInfo(info);
 							setShowImageInfo(true)

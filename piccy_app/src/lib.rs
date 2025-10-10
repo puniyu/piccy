@@ -1,13 +1,13 @@
 mod error;
 
-use tauri::{command};
+use tauri::command;
 use piccy_core::image;
 use crate::error::Error;
 
 #[command]
 fn image_info(image_data: Vec<u8>) -> tauri::Result<image::ImageInfo> {
-    image::get_image_info(image_data)
-        .map_err(|e| tauri::Error::from(Error::from(e)))
+    let info = image::Image::new().with_buffer(image_data).builder().info();
+    info.map_err(|e| tauri::Error::from(Error::from(e)))
 }
 
 
