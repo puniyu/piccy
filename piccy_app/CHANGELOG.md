@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/puniyu-plugins/piccy/compare/app-v0.2.0...app-v0.2.1) (2025-10-10)
+
+
+### 🔧 其他更新
+
+* **release:** 更新发布工作流配置 ([616f5a5](https://github.com/puniyu-plugins/piccy/commit/616f5a5a9d7d62d5f2e4b772d83782536581d07c))
+
 ## [0.2.0](https://github.com/puniyu-plugins/piccy/compare/app-v0.1.0...app-v0.2.0) (2025-10-10)
 
 
