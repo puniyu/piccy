@@ -4,8 +4,8 @@ on:
     branches:
       - main
   pull_request_target:
-    branches:
-      - '!release-please**'
+    branches-ignore:
+      - 'release-please**'
   workflow_dispatch:
 
 env:
@@ -24,6 +24,8 @@ jobs:
     outputs:
       core: ${{ steps.release-please.outputs['piccy_core--release_created'] }}
       app: ${{ steps.release-please.outputs['piccy_app--release_created'] }}
+      app_tag_name: ${{ steps.release-please.outputs['piccy_app--tag_name'] }}
+      app_version: ${{ steps.release-please.outputs['piccy_app--version'] }}
       node: ${{ steps.release-please.outputs['piccy_node--release_created'] }}
     steps:
       - name: 获取token
@@ -41,9 +43,97 @@ jobs:
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
 
+  publish-crates-io:
+    needs: release
+    runs-on: ubuntu-latest
+    if: needs.release.outputs.core
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v5
+
+      - name: 设置 Rust 工具链
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 设置 rust 缓存
+        uses: swatinem/rust-cache@v2
+        with:
+          prefix-key: ${{ env.APP_NAME }}
+          shared-key: core
+          workspaces: piccy_core
+
+      - name: 发布piccy_core
+        run: |
+          cargo publish --package piccy_core
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_API_TOKEN }}
+
   build-tauri-app:
+    needs: release
     uses: ./.github/workflows/build-tauri-app.yaml
+    with:
+      version: ${{ needs.release.outputs.app_version }}
     secrets: inherit
+
+
+  publish-tauri-app:
+    needs: [ build-tauri-app, release ]
+    if : needs.release.outputs.app
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: 下载构建产物
+        uses: actions/download-artifact@v5
+        with:
+          pattern: piccy-app*
+          path: piccy-app/
+
+      - name: 上传Release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          files: piccy-app/**
+          tag_name: ${{ needs.release.outputs.app_tag_name }}
 
   build-npm-lib:
     uses: ./.github/workflows/build-npm-lib.yaml
+
+  publish-npm-lib:
+    needs: [ build-npm-lib, release ]
+    if: needs.release.outputs.node
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: 下载构建产物
+        uses: actions/download-artifact@v5
+        with:
+          pattern: piccy-node*
+          path: piccy-node/artifacts
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: 发布npm包
+        run: |
+          pnpm install
+          pnpm config set provenance true
+          pnpm config set registry https://registry.npmjs.org/
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          pnpm run create-npm-dirs
+          pnpm run artifacts
+          pnpm publish --access public
+        working-directory: piccy-node
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
