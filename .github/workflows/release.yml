@@ -95,10 +95,11 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ steps.app-token.outputs.token }}
-          files: piccy-app/**
+          files: ./*
           tag_name: ${{ needs.release.outputs.app_tag_name }}
 
   build-npm-lib:
+    if: needs.release.outputs.node
     needs: release
     uses: ./.github/workflows/build-npm-lib.yaml
 

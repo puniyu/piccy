@@ -59,6 +59,7 @@ export default function App() {
 					}} />
 
 
+
 					<Button className={"!bg-gradient-to-r from-pink-300 to-blue-300 mt-10"}
 					        mx="auto"
 					        display="block"
