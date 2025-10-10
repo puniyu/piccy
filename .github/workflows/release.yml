@@ -4,8 +4,12 @@ on:
     branches:
       - main
   pull_request_target:
+    branches:
+      - '!release-please**'
   workflow_dispatch:
 
+env:
+  APP_NAME: piccy
 
 permissions:
   id-token: write
@@ -16,10 +20,11 @@ concurrency:
 
 jobs:
   release:
-    if: "!startsWith(github.head_ref, 'release-please')"
     runs-on: ubuntu-latest
     outputs:
-      core: ${{ steps.release-please.outputs['piccy_node--release_created'] }}
+      core: ${{ steps.release-please.outputs['piccy_core--release_created'] }}
+      app: ${{ steps.release-please.outputs['piccy_app--release_created'] }}
+      node: ${{ steps.release-please.outputs['piccy_node--release_created'] }}
     steps:
       - name: 获取token
         uses: actions/create-github-app-token@v2
@@ -36,5 +41,9 @@ jobs:
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
 
-  build-app:
-    uses: ./.github/workflows/build-app.yml
+  build-tauri-app:
+    uses: ./.github/workflows/build-tauri-app.yaml
+    secrets: inherit
+
+  build-npm-lib:
+    uses: ./.github/workflows/build-npm-lib.yaml

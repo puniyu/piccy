@@ -1,0 +1,241 @@
+name: Build Tauri App
+
+on:
+  workflow_call:
+    secrets:
+      STORE_PASSWORD:
+        required: true
+      KEY_ALIAS:
+        required: true
+      KEY_PASSWORD:
+        required: true
+      BASE64_JKS:
+        required: true
+
+env:
+  APP_NAME: piccy
+
+jobs:
+  build_windows:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            label: windows-x86_64
+
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 设置 rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform.target }}
+
+      - name: 配置 taui cli
+        uses: taiki-e/install-action@v2
+        with:
+          tool: tauri-cli
+
+      - name: 设置 rust 缓存
+        uses: swatinem/rust-cache@v2
+        with:
+          prefix-key: ${{ env.APP_NAME }}
+          shared-key: app-${{ matrix.platform.label }}
+          workspaces: piccy_app
+
+      - name: 配置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: 构建
+        run: |
+          pnpm install
+          cargo tauri build --target ${{ matrix.platform.target }}
+        working-directory: piccy_app
+
+      - name: 上传构建产物
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.APP_NAME }}-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/bundle/nsis/${{ env.APP_NAME }}*.exe
+
+      - name: 生成构建信息
+        run: |
+          VERSION=$(jq -r '.version' piccy_app/tauri.conf.json)
+          NAME=$(jq -r '.productName' piccy_app/tauri.conf.json)
+          
+          echo "## 🖥️ Windows桌面应用构建完成" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 应用信息" >> $GITHUB_STEP_SUMMARY
+          echo "- **应用名称:** \`$NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **平台:** \`${{ matrix.platform.label }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **版本:** \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
+
+  build_linux:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            label: linux-x86_64
+          - runner: ubuntu-22.04-arm
+            target: aarch64-unknown-linux-gnu
+            label: linux-aarch64
+
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 设置 rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android x86_64-linux-android armv7-linux-androideabi i686-linux-android
+
+      - name: 配置 taui cli
+        uses: taiki-e/install-action@v2
+        with:
+          tool: tauri-cli
+
+      - name: 配置 webkit
+
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: 配置arm64
+        if: ${{ matrix.platform.label == 'linux-aarch64' }}
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: gcc-aarch64-linux-gnu libwebkit2gtk-4.1-dev:arm64
+
+      - name: 设置 rust 缓存
+        uses: swatinem/rust-cache@v2
+        with:
+          prefix-key: ${{ env.APP_NAME }}
+          shared-key: app-${{ matrix.platform.label }}
+          workspaces: piccy_app
+
+      - name: 配置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: 构建
+        run: |
+          pnpm install
+          cargo tauri build --target ${{ matrix.platform.target }}
+        working-directory: piccy_app
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.APP_NAME }}-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/bundle/deb/${{ env.APP_NAME }}*.deb
+
+      - name: 生成构建信息
+        run: |
+          VERSION=$(jq -r '.version' piccy_app/tauri.conf.json)
+          NAME=$(jq -r '.productName' piccy_app/tauri.conf.json)
+          
+          echo "## 🖥️ Linux桌面应用构建完成" >> $GITHUB_STEP_SUMMARY
+          echo "## 🖥️ Android桌面应用构建完成" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 应用信息" >> $GITHUB_STEP_SUMMARY
+          echo "- **应用名称:** \`$NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **平台:** \`${{ matrix.platform.label }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **版本:** \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
+
+  build_android:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            target: aarch64-linux-android
+            label: android-aarch64
+
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 设置 rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform.target }}
+
+      - name: 配置 taui cli
+        uses: taiki-e/install-action@v2
+        with:
+          tool: tauri-cli
+
+      - name: 配置 webkit
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: 配置ndk
+        id: setup-ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r27d
+
+      - name: 设置 rust 缓存
+        uses: swatinem/rust-cache@v2
+        with:
+          prefix-key: ${{ env.APP_NAME }}
+          shared-key: app-${{ matrix.platform.label }}
+          workspaces: piccy_app
+
+      - name: 配置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: 设置 Android 签名
+        run: |
+          echo "storeFile=keystore.jks" > keystore.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> keystore.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> keystore.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> keystore.properties
+          echo "${{ secrets.BASE64_JKS }}" | base64 --decode > app/keystore.jks
+
+        working-directory: piccy_app/gen/android
+
+
+      - name: 构建
+        run: |
+          pnpm install
+          cargo tauri android build
+        env:
+          NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        working-directory: piccy_app
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.APP_NAME }}-${{ matrix.platform.label }}"
+          path: |
+            piccy_app/gen/android/app/build/outputs/apk/universal/release/app-universal-release.apk
+
+      - name: 生成构建信息
+        run: |
+          VERSION=$(jq -r '.version' piccy_app/tauri.conf.json)
+          NAME=$(jq -r '.productName' piccy_app/tauri.conf.json)
+          
+          echo "## 🖥️ Android桌面应用构建完成" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 应用信息" >> $GITHUB_STEP_SUMMARY
+          echo "- **应用名称:** \`$NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **平台:** \`${{ matrix.platform.label }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **版本:** \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
+
+            
+

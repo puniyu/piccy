@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "com.piccy",
   "build": {
-    "beforeDevCommand": "cd ../web && pnpm dev",
-    "beforeBuildCommand": "cd ../web && pnpm build",
+    "beforeDevCommand": "pnpm --filter puniyu-web run dev",
+    "beforeBuildCommand": "pnpm --filter puniyu-web run build",
     "devUrl": "http://localhost:33720",
     "frontendDist": "web/dist"
   },
@@ -25,7 +25,8 @@
   "bundle": {
     "active": true,
     "targets": [
-      "nsis"
+      "nsis",
+      "deb"
     ],
     "icon": [
       "icons/32x32.png",

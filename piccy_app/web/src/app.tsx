@@ -19,7 +19,7 @@ const image_info = async (image_data: number[]): Promise<ImageInfo> => {
 export default function App() {
 
 	useEffect(() => {
-		if (!process.env.TAURI_ENV_DEBUG) {
+		if (!import.meta.env.DEV) {
 			document.addEventListener('contextmenu', function(event) {
 				event.preventDefault();
 			});
