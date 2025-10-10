@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/puniyu-plugins/piccy/compare/app-v0.2.3...app-v0.2.4) (2025-10-10)
+
+
+### 🔧 其他更新
+
+* **release:** 更新 GitHub Release 配置 ([2dfc3d7](https://github.com/puniyu-plugins/piccy/commit/2dfc3d71d4057e59321ad886837b5af6ebb79598))
+
 ## [0.2.3](https://github.com/puniyu-plugins/piccy/compare/app-v0.2.2...app-v0.2.3) (2025-10-10)
 
 
