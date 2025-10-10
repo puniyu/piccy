@@ -29,8 +29,7 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           prefix-key: ${{ env.APP_NAME }}
-          shared-key: ${{ env.APP_NAME }}-node-${{ matrix.platform.label }}
-          workspaces: piccy_node
+          shared-key: node-${{ matrix.platform.label }}
           
       - name: 配置 pnpm
         uses: pnpm/action-setup@v4
@@ -77,8 +76,7 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           prefix-key: ${{ env.APP_NAME }}
-          shared-key: ${{ env.APP_NAME }}-node-${{ matrix.platform.label }}
-          workspaces: piccy_node
+          shared-key: node-${{ matrix.platform.label }}
 
       - name: 配置 pnpm
         uses: pnpm/action-setup@v4
@@ -124,8 +122,7 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           prefix-key: ${{ env.APP_NAME }}
-          shared-key: ${{ env.APP_NAME }}-node-${{ matrix.platform.label }}
-          workspaces: piccy_node
+          shared-key: node-${{ matrix.platform.label }}
 
       - name: 配置 pnpm
         uses: pnpm/action-setup@v4

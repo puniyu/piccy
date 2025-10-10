@@ -2,10 +2,6 @@ name: Build Tauri App
 
 on:
   workflow_call:
-    inputs:
-      version:
-          required: true
-          type: string
     secrets:
       STORE_PASSWORD:
         required: true
@@ -56,8 +52,6 @@ jobs:
 
       - name: 构建
         run: |
-          $config = Get-Content tauri.conf.json | ConvertFrom-Json
-          $config.version = ${{ inputs.version }}
           pnpm install
           cargo tauri build --target ${{ matrix.platform.target }}
         working-directory: piccy_app
@@ -71,16 +65,17 @@ jobs:
             target/${{ matrix.platform.target }}/release/bundle/nsis/${{ env.APP_NAME }}*.exe
 
       - name: 生成构建信息
-        run: |
-          $VERSION = jq -r '.version' piccy_app/tauri.conf.json
-          $NAME = jq -r '.productName' piccy_app/tauri.conf.json
-          
-          echo "## Windows桌面应用构建完成" >> $env:GITHUB_STEP_SUMMARY
-          echo "" >> $env:GITHUB_STEP_SUMMARY
-          echo "### 应用信息" >> $env:GITHUB_STEP_SUMMARY
-          echo "- **应用名称:** `$NAME`" >> $env:GITHUB_STEP_SUMMARY
-          echo "- **平台:** `${{ matrix.platform.label }}`" >> $env:GITHUB_STEP_SUMMARY
-          echo "- **版本:** `$VERSION`" >> $env:GITHUB_STEP_SUMMARY
+        shell: bash
+        run: |    
+          VERSION=$(jq -r '.version' piccy_app/tauri.conf.json)
+          NAME=$(jq -r '.productName' piccy_app/tauri.conf.json)
+      
+          echo "## Windows桌面应用构建完成" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 应用信息" >> $GITHUB_STEP_SUMMARY
+          echo "- **应用名称:** `${NAME}`" >> $GITHUB_STEP_SUMMARY
+          echo "- **平台:** `${{ matrix.platform.label }}`" >> $GITHUB_STEP_SUMMARY
+          echo "- **版本:** `${VERSION}`" >> $GITHUB_STEP_SUMMARY
         
 
   build_linux:
@@ -126,7 +121,6 @@ jobs:
         with:
           prefix-key: ${{ env.APP_NAME }}
           shared-key: app-${{ matrix.platform.label }}
-          workspaces: piccy_app
 
       - name: 配置 pnpm
         uses: pnpm/action-setup@v4
@@ -197,7 +191,6 @@ jobs:
         with:
           prefix-key: ${{ env.APP_NAME }}
           shared-key: app-${{ matrix.platform.label }}
-          workspaces: piccy_app
 
       - name: 配置 pnpm
         uses: pnpm/action-setup@v4
