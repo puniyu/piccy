@@ -124,6 +124,12 @@ jobs:
           name: "npm-package"
           path: piccy-node
 
+      - name: 下载wasm包
+        uses: actions/download-artifact@v5
+        with:
+          name: "npm-wasm"
+          path: piccy-node
+
       - name: 下载构建产物
         uses: actions/download-artifact@v5
         with:
@@ -153,4 +159,5 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           files: |
             piccy-node/artifacts/piccy-node-*/piccy-node*.node
+            piccy-node/artifacts/piccy-node-*/piccy-node*.wasm
           tag_name: ${{ needs.release.outputs.node_tag_name }}
