@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/puniyu-plugins/piccy/compare/node-v0.3.0...node-v0.3.1) (2025-10-11)
+
+
+### 🎡 持续集成
+
+* 修正node包上传路径 ([5efdc08](https://github.com/puniyu-plugins/piccy/commit/5efdc08ebd53106531a98e0f3cf61913d4bcc244))
+
 ## [0.3.0](https://github.com/puniyu-plugins/piccy/compare/node-v0.2.0...node-v0.3.0) (2025-10-11)
 
 
