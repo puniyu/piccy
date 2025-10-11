@@ -158,6 +158,6 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
           files: |
-            piccy-node/artifacts/piccy-node-*/piccy-node*.node
-            piccy-node/artifacts/piccy-node-*/piccy-node*.wasm
+            piccy-node/artifacts/piccy-node-*/piccy*.node
+            piccy-node/artifacts/piccy-node-*/piccy*.wasm
           tag_name: ${{ needs.release.outputs.node_tag_name }}

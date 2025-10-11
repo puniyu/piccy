@@ -1,4 +1,5 @@
 use thiserror::Error;
+
 #[derive(Error, Debug)]
 pub enum Error {
 	#[error("Core error: {0}")]
