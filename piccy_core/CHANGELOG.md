@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/puniyu-plugins/piccy/compare/core-v0.2.0...core-v0.3.0) (2025-10-11)
+
+
+### ✨ 新功能
+
+* **image:** 添加图像裁剪功能并优化信息获取 ([0ecc66f](https://github.com/puniyu-plugins/piccy/commit/0ecc66f743ea62a3f2e992c4d591455c5eedf5dc))
+
 ## [0.2.0](https://github.com/puniyu-plugins/piccy/compare/core-v0.1.0...core-v0.2.0) (2025-10-10)
 
 
