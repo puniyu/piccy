@@ -1,5 +1,5 @@
 {
-  "name": "@puniyu-plugins/piccy",
+  "name": "@puniyu/piccy",
   "version": "0.4.0",
   "description": "image tool",
   "main": "dist/index.js",
@@ -8,7 +8,7 @@
   "author": "Puniyu",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/puniyu-plugins/piccy.git"
+    "url": "git+https://github.com/puniyu/piccy.git"
   },
   "license": "LGPL-3.0-or-later",
   "keywords": [
@@ -47,5 +47,5 @@
     "@napi-rs/cli": "^3.2.0",
     "@types/node": "^24.7.1"
   },
-  "packageManager": "pnpm@10.14.0"
+  "packageManager": "pnpm@10.20.0"
 }

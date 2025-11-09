@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   release:
-    if: github.actor != 'puniyu-plugins[bot]'
+    if: "!startsWith(github.head_ref, 'release-please')"
     runs-on: ubuntu-latest
     outputs:
       core: ${{ steps.release-please.outputs['piccy_core--release_created'] }}
