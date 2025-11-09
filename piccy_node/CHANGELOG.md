@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/puniyu/piccy/compare/node-v0.4.0...node-v0.4.1) (2025-11-09)
+
+
+### 🐛 错误修复
+
+* 修正node发布 ([ce5490c](https://github.com/puniyu/piccy/commit/ce5490cde8e2f010da9df64db00e6fed7615d0fd))
+
 ## [0.4.0](https://github.com/puniyu/piccy/compare/node-v0.3.1...node-v0.4.0) (2025-11-09)
 
 
