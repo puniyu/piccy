@@ -1,7 +1,7 @@
 mod command;
 mod error;
 
-use command::{image_crop, image_info, download_file};
+use command::{download_file, image_crop, image_info};
 use tauri::Manager;
 use tauri_plugin_fs::FsExt;
 
@@ -11,7 +11,11 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![image_info, image_crop, download_file])
+        .invoke_handler(tauri::generate_handler![
+            image_info,
+            image_crop,
+            download_file
+        ])
         .setup(|app| {
             #[cfg(debug_assertions)]
             {

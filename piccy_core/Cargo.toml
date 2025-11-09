@@ -16,3 +16,5 @@ base64 = "0.22.1"
 
 serde.workspace = true
 thiserror.workspace = true
+imageproc = { version = "0.25.0", features = ["rayon"] }
+rayon = "1.11.0"

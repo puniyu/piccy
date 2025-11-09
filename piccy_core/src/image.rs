@@ -2,60 +2,85 @@ use crate::error::Error;
 use serde::{Deserialize, Serialize};
 
 use crate::Result;
+use crate::common::AnimationInfo;
 use base64::{Engine, engine::general_purpose::STANDARD};
+pub use image::Rgb;
 use image::{
-    AnimationDecoder, GenericImageView, ImageFormat, ImageReader,
+    AnimationDecoder, DynamicImage,
+    DynamicImage::ImageRgba8,
+    GenericImageView, ImageFormat, ImageReader, RgbaImage,
     codecs::{gif::GifDecoder, webp::WebPDecoder},
+    imageops::FilterType,
 };
 use std::{io::Cursor, path::Path, sync::Arc};
 
-///
-/// # 示例
-/// ```
-/// use std::path::Path;
-/// use piccy_core::image::Image;
-/// let image = Image::new().with_path(Path::new("./image.png")).unwrap().builder();
-/// let info = image.info();
-/// ```
-#[derive(Default, Clone)]
-pub struct Image(Arc<Vec<u8>>);
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ImageInfo {
+    /// 图像宽度
+    pub width: u32,
+    /// 图像高度
+    pub height: u32,
+    /// 是否为动图
+    pub is_multi_frame: bool,
+    /// 动图帧数
+    pub frame_count: Option<u32>,
+    /// 动图平均帧间隔
+    pub average_duration: Option<f32>,
+}
 
-impl Image {
+/// 图像翻转模式
+#[derive(Debug, Clone)]
+pub enum FlipMode {
+    /// 水平翻转
+    Horizontal,
+    /// 垂直翻转
+    Vertical,
+}
+
+/// 图像拼接模式
+#[derive(Debug, Clone)]
+pub enum MergeMode {
+    /// 水平拼接
+    Horizontal,
+    /// 垂直拼接
+    Vertical,
+}
+
+#[derive(Default, Clone)]
+pub struct ImageBuilder(pub(crate) Arc<Vec<u8>>);
+
+impl ImageBuilder {
     pub fn new() -> Self {
-        Image(Arc::new(Vec::new()))
+        Self(Arc::new(Vec::new()))
     }
 
     pub fn with_path(&self, path: &Path) -> Result<Self> {
         let data = std::fs::read(path)?;
-        Ok(Image(Arc::new(data)))
+        Ok(Self(Arc::new(data)))
     }
     pub fn with_buffer(&self, buffer: Vec<u8>) -> Self {
-        Image(Arc::new(buffer))
+        Self(Arc::new(buffer))
     }
 
     pub fn with_base64(&self, base64: &str) -> Result<Self> {
         let data = STANDARD.decode(base64)?;
-        Ok(Image(Arc::new(data)))
+        Ok(Self(Arc::new(data)))
     }
 
-    pub fn builder(&self) -> ImageBuilder {
-        ImageBuilder(self.0.clone())
-    }
 }
 #[derive(Clone)]
-pub struct ImageBuilder(Arc<Vec<u8>>);
+pub struct Image(Arc<Vec<u8>>);
 
-impl ImageBuilder {
+impl Image {
+    pub fn new(image: ImageBuilder) -> Self {
+        Self(image.0)
+    }
+
     /// 获取图像信息
     ///
     /// # 返回值
     /// 返回 [ImageInfo] 结构体，包含图像的宽度、高度、是否为动图、帧数和平均帧间隔等信息
     ///
-    /// # 示例
-    ///
-    /// ```rust
-    /// let info = get_image_info("./image.png")?;
-    ///```
     pub fn info(&self) -> Result<ImageInfo> {
         let image_data = self.0.as_slice();
         let cursor = Cursor::new(&image_data);
@@ -65,28 +90,28 @@ impl ImageBuilder {
                 let image = reader.decode()?;
                 let decoder = GifDecoder::new(cursor.clone())?;
                 let frames = decoder.into_frames().collect_frames()?;
-                let (frame_count, average_duration) = calculate_frame_info(&frames);
+                let animation_info = AnimationInfo::from(frames);
 
                 Ok(ImageInfo {
                     width: image.width(),
                     height: image.height(),
-                    is_multi_frame: frame_count > 1,
-                    frame_count: Some(frame_count),
-                    average_duration,
+                    is_multi_frame: animation_info.frame_count > 1,
+                    frame_count: Some(animation_info.frame_count),
+                    average_duration: animation_info.frame_delay,
                 })
             }
             Some(ImageFormat::WebP) => {
                 let image = reader.decode()?;
                 let decoder = WebPDecoder::new(cursor)?;
                 let frames = decoder.into_frames().collect_frames()?;
-                let (frame_count, average_duration) = calculate_frame_info(&frames);
+                let animation_info = AnimationInfo::from(frames);
 
                 Ok(ImageInfo {
                     width: image.width(),
                     height: image.height(),
-                    is_multi_frame: frame_count > 1,
-                    frame_count: Some(frame_count),
-                    average_duration,
+                    is_multi_frame: animation_info.frame_count > 1,
+                    frame_count: Some(animation_info.frame_count),
+                    average_duration: animation_info.frame_delay,
                 })
             }
             _ => {
@@ -97,7 +122,7 @@ impl ImageBuilder {
                     height: image.height(),
                     is_multi_frame: false,
                     frame_count: Some(1),
-                    average_duration: Some(0.0),
+                    average_duration: None,
                 })
             }
         }
@@ -132,37 +157,267 @@ impl ImageBuilder {
         };
         let cropped_img = image.view(left, top, width, height).to_image();
         let mut buffer = Vec::new();
-        image::DynamicImage::ImageRgba8(cropped_img)
+        ImageRgba8(cropped_img).write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
+        Ok(buffer)
+    }
+
+    /// 缩放图像
+    ///
+    /// ## 参数
+    /// - `width`: 缩放后的宽度
+    /// - `height`: 缩放后的高度
+    pub fn resize(&self, width: u32, height: u32) -> Result<Vec<u8>> {
+        let image_data = self.0.as_slice();
+        let cursor = Cursor::new(&image_data);
+        let reader = ImageReader::new(cursor).with_guessed_format()?;
+        let image = reader.decode()?;
+        let resized_image = image
+            .resize_exact(width, height, FilterType::Lanczos3)
+            .into_rgba8();
+        let mut buffer = Vec::new();
+        ImageRgba8(resized_image).write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
+        Ok(buffer)
+    }
+
+    /// 旋转图像
+    ///
+    /// ## 参数
+    /// - `angle`: 旋转的角度
+    pub fn rotate(&self, angle: f32) -> Result<Vec<u8>> {
+        let image_data = self.0.as_slice();
+        let cursor = Cursor::new(&image_data);
+        let reader = ImageReader::new(cursor).with_guessed_format()?;
+        let image = reader.decode()?.to_rgba8();
+
+        let rotated_image = imageproc::geometric_transformations::rotate_about_center(
+            &image,
+            angle.to_radians(),
+            imageproc::geometric_transformations::Interpolation::Bilinear,
+            image::Rgba([0, 0, 0, 0]),
+        );
+
+        let mut buffer = Vec::new();
+        ImageRgba8(rotated_image).write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
+        Ok(buffer)
+    }
+
+    /// 翻转图像
+    ///
+    /// ## 参数
+    /// - `mode`: 翻转模式
+    ///
+    pub fn flip(&self, mode: FlipMode) -> Result<Vec<u8>> {
+        let image_data = self.0.as_slice();
+        let cursor = Cursor::new(&image_data);
+        let reader = ImageReader::new(cursor).with_guessed_format()?;
+
+        let image = reader.decode()?;
+
+        let horizontal_image = match mode {
+            FlipMode::Horizontal => image.fliph(),
+            FlipMode::Vertical => image.flipv(),
+        };
+        let mut buffer = Vec::new();
+        ImageRgba8(horizontal_image.to_rgba8())
             .write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
+        Ok(buffer)
+    }
+
+    /// 灰度化图像
+    pub fn grayscale(&self) -> Result<Vec<u8>> {
+        let image_data = self.0.as_slice();
+        let cursor = Cursor::new(&image_data);
+        let reader = ImageReader::new(cursor).with_guessed_format()?;
+        let image = reader.decode()?;
+        let grayscale_image = image.grayscale();
+        let mut buffer = Vec::new();
+        ImageRgba8(grayscale_image.to_rgba8())
+            .write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
+        Ok(buffer)
+    }
+
+    /// 反色图像
+    pub fn invert(&self) -> Result<Vec<u8>> {
+        let image_data = self.0.as_slice();
+        let cursor = Cursor::new(&image_data);
+        let reader = ImageReader::new(cursor).with_guessed_format()?;
+        let mut image = reader.decode()?.into_rgba8();
+        image.pixels_mut().for_each(|pixel| {
+            let [r, g, b, a] = pixel.0;
+            pixel.0 = [255 - r, 255 - g, 255 - b, a];
+        });
+        let mut buffer = Vec::new();
+        ImageRgba8(image).write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
+        Ok(buffer)
+    }
+
+    /// 颜色蒙版
+    ///
+    /// ## 参数
+    /// - `rgba`: rgba代码
+    pub fn color_mask(&self, rgba: Rgb<u8>) -> Result<Vec<u8>> {
+        let image_data = self.0.as_slice();
+        let cursor = Cursor::new(&image_data);
+        let reader = ImageReader::new(cursor).with_guessed_format()?;
+        let mut image = reader.decode()?.into_rgba8();
+
+        let Rgb([r, g, b]) = rgba;
+
+        image.pixels_mut().for_each(|pixel| {
+            let [red, green, blue, alpha] = pixel.0;
+            let src_alpha = alpha as f32 / 255.0;
+
+            pixel.0 = [
+                ((r as f32) * src_alpha * 0.5 + (red as f32) * (1.0 - src_alpha * 0.5)).round()
+                    as u8,
+                ((g as f32) * src_alpha * 0.5 + (green as f32) * (1.0 - src_alpha * 0.5)).round()
+                    as u8,
+                ((b as f32) * src_alpha * 0.5 + (blue as f32) * (1.0 - src_alpha * 0.5)).round()
+                    as u8,
+                alpha,
+            ];
+        });
+
+        let mut buffer = Vec::new();
+        image.write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
+        Ok(buffer)
+    }
+
+    /// 幻影坦克
+    ///
+    /// ## 参数
+    /// - `image`: 需要隐藏的图片
+    pub fn mirage(&self, image: ImageBuilder) -> Result<Vec<u8>> {
+        let wlight = 1.0f32;
+        let blight = 0.5f32;
+
+        let image2 = image.0;
+
+        let info1 = self.info()?;
+        let info2 = Image(image2.clone()).info()?;
+
+        let w = info1.width.min(info2.width);
+        let h = info1.height.min(info2.height);
+
+        let img1 = ImageReader::new(Cursor::new(self.0.as_slice()))
+            .with_guessed_format()?
+            .decode()?;
+        let img2 = ImageReader::new(Cursor::new(image2.as_slice()))
+            .with_guessed_format()?
+            .decode()?;
+
+        let img1 = img1
+            .resize_exact(w, h, image::imageops::CatmullRom)
+            .to_rgba8();
+
+        let img2 = img2
+            .resize_exact(w, h, image::imageops::CatmullRom)
+            .to_rgba8();
+
+        let calculate_luminance = |pixel: &image::Rgba<u8>, light_factor: f32| -> f32 {
+            (0.299 * pixel.0[0] as f32 + 0.587 * pixel.0[1] as f32 + 0.114 * pixel.0[2] as f32) * light_factor
+        };
+
+        let mut out_img = RgbaImage::new(w, h);
+        out_img.enumerate_pixels_mut().for_each(|(x, y, pixel)| {
+            let wpixel = img1.get_pixel(x, y);
+            let bpixel = img2.get_pixel(x, y);
+
+            let wc = calculate_luminance(wpixel, wlight);
+            let bc = calculate_luminance(bpixel, blight);
+
+            let a = (255.0 - wc + bc).clamp(0.0, 255.0);
+            let r = if a > 0.0 {
+                (bc / a * 255.0).min(255.0)
+            } else {
+                0.0
+            };
+
+            *pixel = image::Rgba([
+                r.round() as u8,
+                r.round() as u8,
+                r.round() as u8,
+                a.round() as u8
+            ]);
+        });
+
+        let mut buffer = Vec::new();
+        out_img.write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
         Ok(buffer)
     }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct ImageInfo {
-    /// 图像宽度
-    pub width: u32,
-    /// 图像高度
-    pub height: u32,
-    /// 是否为动图
-    pub is_multi_frame: bool,
-    /// 动图帧数
-    pub frame_count: Option<u32>,
-    /// 动图平均帧间隔
-    pub average_duration: Option<f32>,
-}
-
-/// 计算帧信息
-fn calculate_frame_info(frames: &[image::Frame]) -> (u32, Option<f32>) {
-    let frame_count = frames.len() as u32;
-    let average_duration = if frame_count > 1 {
-        let total_duration = frames
-            .iter()
-            .map(|frame| frame.delay().numer_denom_ms().0)
-            .sum::<u32>();
-        Some((total_duration as f32 / 1000.0) / frame_count as f32)
-    } else {
-        Some(0.0f32)
+/// 拼接图片
+///
+/// ## 参数
+/// - `images`: 需要拼接的图片实例
+/// - `mode`: 拼接模式
+pub fn image_merge(images: Vec<ImageBuilder>, mode: MergeMode) -> Result<Vec<u8>> {
+    use image::imageops;
+    if images.is_empty() {
+        return Err(Error::Other("至少需要一个图片".to_string()));
     };
-    (frame_count, average_duration)
+
+    let decoded_images = images
+        .iter()
+        .map(|image_data| {
+            let cursor = Cursor::new(image_data.0.as_slice());
+            let decoder = ImageReader::new(cursor).with_guessed_format()?;
+            decoder.decode().map_err(Error::from)
+        })
+        .collect::<Result<Vec<DynamicImage>>>();
+
+    let decoded_images = decoded_images?;
+
+    let merged_image = match mode {
+        MergeMode::Horizontal => {
+            let min_height = decoded_images
+                .iter()
+                .map(|img| img.height())
+                .min()
+                .unwrap_or(0);
+            let total_width: u32 = decoded_images
+                .iter()
+                .map(|img| {
+                    let scale = min_height as f32 / img.height() as f32;
+                    (img.width() as f32 * scale) as u32
+                })
+                .sum();
+            let mut merged_image = ImageRgba8(RgbaImage::new(total_width, min_height));
+            let mut current_x: u32 = 0;
+            for image in &decoded_images {
+                let scale = min_height as f32 / image.height() as f32;
+                let scaled_width = (image.width() as f32 * scale) as u32;
+                let resized_image =
+                    image.resize_exact(scaled_width, min_height, FilterType::Triangle);
+                imageops::overlay(&mut merged_image, &resized_image, current_x as i64, 0);
+                current_x += scaled_width;
+            }
+            merged_image
+        }
+        MergeMode::Vertical => {
+            let max_width = decoded_images
+                .iter()
+                .map(|img| img.width())
+                .max()
+                .unwrap_or(0);
+            let total_height = decoded_images.iter().map(|img| img.height()).sum();
+            let mut merged_image = ImageRgba8(RgbaImage::new(max_width, total_height));
+            let mut current_y = 0;
+
+            for image in &decoded_images {
+                let resized_image =
+                    image.resize_exact(max_width, image.height(), FilterType::Triangle);
+                imageops::overlay(&mut merged_image, &resized_image, 0, current_y as i64);
+                current_y += resized_image.height();
+            }
+            merged_image
+        }
+    };
+
+    let mut buffer = Vec::new();
+    merged_image
+        .into_rgba8()
+        .write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
+    Ok(buffer)
 }

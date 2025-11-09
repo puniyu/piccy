@@ -1,7 +1,9 @@
 [workspace]
 members = [
-    "piccy_app"
-, "piccy_core", "piccy_node"]
+    "piccy_app",
+    "piccy_core",
+    "piccy_node"
+]
 resolver = "2"
 
 [workspace.package]

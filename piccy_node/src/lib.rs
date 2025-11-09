@@ -1,6 +1,201 @@
-mod error;
+mod common;
 mod types;
-mod image;
-mod gif;
 
-pub(crate) type Result<T> = std::result::Result<T, error::Error>;
+type Result<T> = napi::Result<T>;
+
+use crate::common::{FlipMode, MergeMode, parse_rgb};
+use crate::types::image::ImageInfo;
+use napi::bindgen_prelude::Buffer;
+use napi_derive::napi;
+use piccy_core::gif::{Gif, self};
+use piccy_core::image::{self, Image, ImageBuilder};
+use std::sync::LazyLock;
+use std::time::Duration;
+
+static IMAGE_CLIENT: LazyLock<ImageBuilder> = LazyLock::new(ImageBuilder::new);
+
+/// 获取图像信息
+#[napi]
+pub fn image_info(image: Buffer) -> napi::Result<ImageInfo> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let info = Image::new(image_data)
+        .info()
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(info.into())
+}
+
+/// 裁剪图像
+///
+/// # 参数
+/// - `left`: 裁剪的左上角 X 坐标, 默认为 0
+/// - `top`: 裁剪的左上角 Y 坐标, 默认为 0
+/// - `width`: 裁剪的宽度, 默认为100
+/// - `height`: 裁剪的高度, 默认为100
+#[napi]
+pub fn image_crop(
+    image: Buffer,
+    left: Option<u32>,
+    top: Option<u32>,
+    width: Option<u32>,
+    height: Option<u32>,
+) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let result = Image::new(image_data)
+        .crop(left, top, width, height)
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// 缩放图像
+///
+/// ## 参数
+/// - `width`: 缩放后的宽度
+/// - `height`: 缩放后的高度
+#[napi]
+pub fn image_resize(image: Buffer, width: u32, height: u32) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let result = Image::new(image_data)
+        .resize(width, height)
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// 旋转图像
+///
+/// ## 参数
+/// - `angle`: 旋转的角度
+#[napi]
+pub fn image_rotate(image: Buffer, angle: f64) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let result = Image::new(image_data)
+        .rotate(angle as f32)
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// 翻转图像
+///
+/// ## 参数
+/// - `mode`: 翻转模式
+///
+#[napi]
+pub fn image_flip(image: Buffer, mode: FlipMode) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let result = Image::new(image_data)
+        .flip(mode.into())
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// 灰度化图像
+#[napi]
+pub fn image_grayscale(image: Buffer) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let result = Image::new(image_data)
+        .grayscale()
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// 反色图像
+#[napi]
+pub fn image_invert(image: Buffer) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let result = Image::new(image_data)
+        .invert()
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// 颜色蒙版
+#[napi]
+pub fn image_color_mask(image: Buffer, rgb: String) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let mask_color = parse_rgb(&rgb)?;
+    let result = Image::new(image_data)
+        .color_mask(mask_color)
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// 幻影坦克
+///
+/// ## 参数
+/// - `image`: 需要显示的图片
+/// - `image2`: 需要隐藏的图片
+#[napi]
+pub fn image_mirage(image: Buffer, image2: Buffer) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let image_data2 = IMAGE_CLIENT.with_buffer(image2.to_vec());
+    let result = Image::new(image_data)
+        .mirage(image_data2)
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// 拼接图片
+///
+/// ## 参数
+/// - `images`: 需要拼接的图片实例
+/// - `mode`: 拼接模式
+#[napi]
+pub fn image_merge(images: Vec<Buffer>, mode: MergeMode) -> Result<Buffer> {
+    let image_data = images
+        .into_iter()
+        .map(|image| IMAGE_CLIENT.with_buffer(image.to_vec()))
+        .collect::<Vec<ImageBuilder>>();
+    let result = image::image_merge(image_data, mode.into())
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// gif分解
+#[napi]
+pub fn gif_split(image: Buffer) -> Result<Vec<Buffer>> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let result = Gif::new(image_data)
+        .split()
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into_iter().map(Buffer::from).collect())
+}
+
+/// gif倒放
+#[napi]
+pub fn gif_reverse(image: Buffer) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let result = Gif::new(image_data)
+        .reverse()
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+/// gif倒放
+/// 
+/// ## 参数
+/// - `duration`: 帧间隔时间(单位: 秒)
+#[napi]
+pub fn gif_change_duration(image: Buffer, duration: u32) -> Result<Buffer> {
+    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+    let result = Gif::new(image_data)
+        .change_duration(Duration::from_secs(duration as u64))
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
+
+
+/// gif拼接
+///
+/// ## 参数
+/// - `images`: 图片
+/// - `duration`: 帧间隔时间
+#[napi]
+pub fn gif_merge(images: Vec<Buffer>, duration: Option<u32>) -> Result<Buffer> {
+    let image_data = images
+        .into_iter()
+        .map(|image| IMAGE_CLIENT.with_buffer(image.to_vec()))
+        .collect::<Vec<ImageBuilder>>();
+    let delay = duration.map(|d| Duration::from_secs(d as u64));
+    let result = gif::gif_merge(image_data,delay )
+        .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    Ok(result.into())
+}
