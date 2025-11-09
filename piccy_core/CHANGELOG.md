@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/puniyu/piccy/compare/core-v0.3.0...core-v0.4.0) (2025-11-09)
+
+
+### ✨ 新功能
+
+* **image:** 重构图像处理模块并添加新功能 ([56915c4](https://github.com/puniyu/piccy/commit/56915c45ff88b8d34045bf6b2bd2ff62bf57d1b0))
+
 ## [0.3.0](https://github.com/puniyu-plugins/piccy/compare/core-v0.2.0...core-v0.3.0) (2025-10-11)
 
 
