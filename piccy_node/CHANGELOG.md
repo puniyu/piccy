@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/puniyu/piccy/compare/node-v0.4.1...node-v0.4.2) (2025-11-16)
+
+
+### 🔧 其他更新
+
+* **deps:** 移除自定义 renovate 配置规则 ([266d6b6](https://github.com/puniyu/piccy/commit/266d6b6e2a59a4cce57c9adac4f34b42531b526b))
+
 ## [0.4.1](https://github.com/puniyu/piccy/compare/node-v0.4.0...node-v0.4.1) (2025-11-09)
 
 
