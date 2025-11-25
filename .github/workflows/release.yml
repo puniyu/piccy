@@ -52,15 +52,12 @@ jobs:
       - name: 检出仓库
         uses: actions/checkout@v5
 
-      - name: 设置 Rust 工具链
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: 设置 rust 缓存
-        uses: swatinem/rust-cache@v2
+      - name: 设置 rust
+        uses: puniyu/setup-rust@main
         with:
+          save-cache: true
           prefix-key: ${{ env.APP_NAME }}
-          shared-key: core
-          workspaces: piccy_core
+          tools: tauri-cli
 
       - name: 发布piccy_core
         run: |

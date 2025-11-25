@@ -2,7 +2,6 @@ use crate::error::Error;
 use piccy_core::image::{self, Image};
 use tauri::ipc::Response;
 use tauri::{AppHandle, Manager, Runtime, command};
-use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
 #[command]
 pub(crate) fn image_info(image: Vec<u8>) -> tauri::Result<image::ImageInfo> {
@@ -37,7 +36,7 @@ pub(crate) fn image_crop(
 pub(crate) fn download_file<R: Runtime>(
     app_handle: AppHandle<R>,
     data: Vec<u8>,
-) -> tauri::Result<()> {
+) -> tauri::Result<String> {
     use std::time::{SystemTime, UNIX_EPOCH};
     let download_dir = app_handle.path().download_dir()?;
     let timestamp = SystemTime::now()
@@ -46,11 +45,6 @@ pub(crate) fn download_file<R: Runtime>(
         .as_secs();
     let filename = format!("{}.png", timestamp);
     let path = download_dir.join(filename);
-    std::fs::write(path.as_path(), data)?;
-    app_handle
-        .dialog()
-        .message(format!("文件保存在{}", path.to_string_lossy()))
-        .kind(MessageDialogKind::Info)
-        .blocking_show();
-    Ok(())
+    std::fs::write(path.as_path(), &data)?;
+    Ok(path.to_string_lossy().to_string())
 }
