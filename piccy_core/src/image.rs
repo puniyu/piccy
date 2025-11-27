@@ -66,14 +66,18 @@ impl ImageBuilder {
         let data = STANDARD.decode(base64)?;
         Ok(Self(Arc::new(data)))
     }
+    
+    pub fn build(&self) -> Image {
+        Image(self.0.clone())
+    }
 
 }
 #[derive(Clone)]
 pub struct Image(Arc<Vec<u8>>);
 
 impl Image {
-    pub fn new(image: ImageBuilder) -> Self {
-        Self(image.0)
+    pub fn new(image: Vec<u8>) -> Self {
+        Self(Arc::new(image))
     }
 
     /// 获取图像信息

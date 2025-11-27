@@ -8,7 +8,7 @@ use crate::types::image::ImageInfo;
 use napi::bindgen_prelude::Buffer;
 use napi_derive::napi;
 use piccy_core::gif::{Gif, self};
-use piccy_core::image::{self, Image, ImageBuilder};
+use piccy_core::image::{self, ImageBuilder};
 use std::sync::LazyLock;
 use std::time::Duration;
 
@@ -16,9 +16,9 @@ static IMAGE_CLIENT: LazyLock<ImageBuilder> = LazyLock::new(ImageBuilder::new);
 
 /// 获取图像信息
 #[napi]
-pub fn image_info(image: Buffer) -> napi::Result<ImageInfo> {
-    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
-    let info = Image::new(image_data)
+pub fn image_info(image_data: Buffer) -> napi::Result<ImageInfo> {
+    let image = IMAGE_CLIENT.with_buffer(image_data.to_vec()).build();
+    let info = image
         .info()
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
     Ok(info.into())
@@ -33,14 +33,14 @@ pub fn image_info(image: Buffer) -> napi::Result<ImageInfo> {
 /// - `height`: 裁剪的高度, 默认为100
 #[napi]
 pub fn image_crop(
-    image: Buffer,
+    image_data: Buffer,
     left: Option<u32>,
     top: Option<u32>,
     width: Option<u32>,
     height: Option<u32>,
 ) -> Result<Buffer> {
-    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
-    let result = Image::new(image_data)
+    let image = IMAGE_CLIENT.with_buffer(image_data.to_vec()).build();
+    let result = image
         .crop(left, top, width, height)
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
     Ok(result.into())
@@ -52,9 +52,9 @@ pub fn image_crop(
 /// - `width`: 缩放后的宽度
 /// - `height`: 缩放后的高度
 #[napi]
-pub fn image_resize(image: Buffer, width: u32, height: u32) -> Result<Buffer> {
-    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
-    let result = Image::new(image_data)
+pub fn image_resize(image_data: Buffer, width: u32, height: u32) -> Result<Buffer> {
+    let image = IMAGE_CLIENT.with_buffer(image_data.to_vec()).build();
+    let result = image
         .resize(width, height)
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
     Ok(result.into())
@@ -65,9 +65,9 @@ pub fn image_resize(image: Buffer, width: u32, height: u32) -> Result<Buffer> {
 /// ## 参数
 /// - `angle`: 旋转的角度
 #[napi]
-pub fn image_rotate(image: Buffer, angle: f64) -> Result<Buffer> {
-    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
-    let result = Image::new(image_data)
+pub fn image_rotate(image_data: Buffer, angle: f64) -> Result<Buffer> {
+    let image = IMAGE_CLIENT.with_buffer(image_data.to_vec()).build();
+    let result = image
         .rotate(angle as f32)
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
     Ok(result.into())
@@ -79,9 +79,9 @@ pub fn image_rotate(image: Buffer, angle: f64) -> Result<Buffer> {
 /// - `mode`: 翻转模式
 ///
 #[napi]
-pub fn image_flip(image: Buffer, mode: FlipMode) -> Result<Buffer> {
-    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
-    let result = Image::new(image_data)
+pub fn image_flip(image_data: Buffer, mode: FlipMode) -> Result<Buffer> {
+    let image = IMAGE_CLIENT.with_buffer(image_data.to_vec()).build();
+    let result = image
         .flip(mode.into())
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
     Ok(result.into())
@@ -89,9 +89,9 @@ pub fn image_flip(image: Buffer, mode: FlipMode) -> Result<Buffer> {
 
 /// 灰度化图像
 #[napi]
-pub fn image_grayscale(image: Buffer) -> Result<Buffer> {
-    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
-    let result = Image::new(image_data)
+pub fn image_grayscale(image_data: Buffer) -> Result<Buffer> {
+    let image = IMAGE_CLIENT.with_buffer(image_data.to_vec()).build();
+    let result = image
         .grayscale()
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
     Ok(result.into())
@@ -99,9 +99,9 @@ pub fn image_grayscale(image: Buffer) -> Result<Buffer> {
 
 /// 反色图像
 #[napi]
-pub fn image_invert(image: Buffer) -> Result<Buffer> {
-    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
-    let result = Image::new(image_data)
+pub fn image_invert(image_data: Buffer) -> Result<Buffer> {
+    let image = IMAGE_CLIENT.with_buffer(image_data.to_vec()).build();
+    let result = image
         .invert()
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
     Ok(result.into())
@@ -109,10 +109,10 @@ pub fn image_invert(image: Buffer) -> Result<Buffer> {
 
 /// 颜色蒙版
 #[napi]
-pub fn image_color_mask(image: Buffer, rgb: String) -> Result<Buffer> {
-    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
+pub fn image_color_mask(image_data: Buffer, rgb: String) -> Result<Buffer> {
+    let image = IMAGE_CLIENT.with_buffer(image_data.to_vec()).build();
     let mask_color = parse_rgb(&rgb)?;
-    let result = Image::new(image_data)
+    let result = image
         .color_mask(mask_color)
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
     Ok(result.into())
@@ -124,11 +124,11 @@ pub fn image_color_mask(image: Buffer, rgb: String) -> Result<Buffer> {
 /// - `image`: 需要显示的图片
 /// - `image2`: 需要隐藏的图片
 #[napi]
-pub fn image_mirage(image: Buffer, image2: Buffer) -> Result<Buffer> {
-    let image_data = IMAGE_CLIENT.with_buffer(image.to_vec());
-    let image_data2 = IMAGE_CLIENT.with_buffer(image2.to_vec());
-    let result = Image::new(image_data)
-        .mirage(image_data2)
+pub fn image_mirage(image_data: Buffer, image_data2: Buffer) -> Result<Buffer> {
+    let image = IMAGE_CLIENT.with_buffer(image_data.to_vec()).build();
+    let image2 = IMAGE_CLIENT.with_buffer(image_data2.to_vec());
+    let result = image
+        .mirage(image2)
         .map_err(|e| napi::Error::from_reason(e.to_string()))?;
     Ok(result.into())
 }

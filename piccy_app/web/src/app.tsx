@@ -7,7 +7,6 @@ import { ColorModeButton } from "@/components/ui/color-mode";
 import { toaster } from "@/components/ui/toaster";
 import { motion, AnimatePresence } from "motion/react";
 
-
 export default function App() {
   useEffect(() => {
     if (!import.meta.env.DEV) {
@@ -36,10 +35,6 @@ export default function App() {
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
-      <div className="absolute top-5 right-5 z-10">
-        <ColorModeButton />
-      </div>
-
       <motion.div
         layout
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -49,10 +44,12 @@ export default function App() {
           opacity: { duration: 0.4 },
           y: { duration: 0.4 },
         }}
-        className={`!px-8 !py-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 flex flex-col gap-8 ${
-          uploadedFiles.length > 0 ? "w-[95%] max-w-5xl" : "w-[90%] max-w-2xl"
-        }`}
+        data-has-files={uploadedFiles.length > 0}
+        className="relative !px-8 !py-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 flex flex-col gap-8 w-[90%] max-w-2xl data-[has-files=true]:w-[95%] data-[has-files=true]:max-w-5xl"
       >
+        <div className="absolute top-4 right-4 z-10">
+          <ColorModeButton />
+        </div>
         {/* 标题区域 */}
         <div className="text-center space-y-3">
           <div className="flex items-center justify-center gap-3 text-gray-900 dark:text-white">
@@ -103,7 +100,7 @@ export default function App() {
                         </Text>
                         <Text
                           fontSize="sm"
-                          className="text-gray-400 dark:text-gray-500"
+                          className="text-gray-400 dark:text-gray-500 whitespace-normal break-words text-center"
                         >
                           支持 JPG、PNG、GIF 等格式，单次最多上传 20 张图片
                         </Text>

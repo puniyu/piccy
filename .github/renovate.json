@@ -3,9 +3,12 @@
   "extends": [
     "github>puniyu/.github//.github/renovate"
   ],
+  "ignorePaths": [
+    "**/piccy_app/gen//**"
+  ],
   "packageRules": [
     {
-      "groupName": "sysinfo",
+      "groupName": "image",
       "matchDatasources": [
         "crate"
       ],
