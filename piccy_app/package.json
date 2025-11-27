@@ -5,7 +5,7 @@
     "type": "module",
     "devDependencies": {
         "@chakra-ui/cli": "^3.27.1",
-        "@prettier/plugin-oxc": "^0.0.5",
+        "@prettier/plugin-oxc": "^0.1.0",
         "@tailwindcss/cli": "^4.1.14",
         "oxlint": "^1.23.0",
         "prettier": "^3.6.2",
