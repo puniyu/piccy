@@ -135,7 +135,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.23.0
+          version: 10.24.0
 
       - name: 发布npm包
         run: |

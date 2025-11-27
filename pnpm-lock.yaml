@@ -15,7 +15,7 @@ importers:
         version: 3.30.0(@chakra-ui/react@3.30.0(@emotion/react@11.14.0(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))
       '@prettier/plugin-oxc':
         specifier: ^0.1.0
-        version: 0.1.0
+        version: 0.1.1
       '@tailwindcss/cli':
         specifier: ^4.1.14
         version: 4.1.17
@@ -24,7 +24,7 @@ importers:
         version: 1.30.0
       prettier:
         specifier: ^3.6.2
-        version: 3.7.0
+        version: 3.7.1
       sass:
         specifier: ^1.93.2
         version: 1.94.2
@@ -1266,8 +1266,8 @@ packages:
     resolution: {integrity: sha512-dfUnCxiN9H4ap84DvD2ubjw+3vUNpstxa0TneY/Paat8a3R4uQZDLSvWjmznAY/DoahqTHl9V46HF/Zs3F29pg==}
     engines: {node: '>= 10.0.0'}
 
-  '@prettier/plugin-oxc@0.1.0':
-    resolution: {integrity: sha512-cfaCVXE4yWxMeghglxDKKAmcjyPlo3LBS6CQYVnPZGY6sssJlKinNzRKi7Z4QgJ1DTeS3OMLvzrjeI2WFxshTQ==}
+  '@prettier/plugin-oxc@0.1.1':
+    resolution: {integrity: sha512-gXqHoTpdHOE0WcbE25gDrBVJ09uGb+u29q73HoyA/o05SxCBT0XtTxocOzVTMo+vCBsXt74yf3XNSzeczbfiVQ==}
     engines: {node: '>=14'}
 
   '@rolldown/binding-android-arm64@1.0.0-beta.52':
@@ -2510,8 +2510,8 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  prettier@3.7.0:
-    resolution: {integrity: sha512-pBiBj/gjRY9Qpk1b7cDda6Rbwvkaggos779AHQ0Ek/odwDx6xG6DRBxtnp1QmxbuD7pAO8/SQ8vuhtGv9LoLWA==}
+  prettier@3.7.1:
+    resolution: {integrity: sha512-RWKXE4qB3u5Z6yz7omJkjWwmTfLdcbv44jUVHC5NpfXwFGzvpQM798FGv/6WNK879tc+Cn0AAyherCl1KjbyZQ==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -3931,7 +3931,7 @@ snapshots:
       '@parcel/watcher-win32-ia32': 2.5.1
       '@parcel/watcher-win32-x64': 2.5.1
 
-  '@prettier/plugin-oxc@0.1.0':
+  '@prettier/plugin-oxc@0.1.1':
     dependencies:
       oxc-parser: 0.99.0
 
@@ -5330,7 +5330,7 @@ snapshots:
 
   prettier@3.6.2: {}
 
-  prettier@3.7.0: {}
+  prettier@3.7.1: {}
 
   proxy-compare@3.0.1: {}
 
