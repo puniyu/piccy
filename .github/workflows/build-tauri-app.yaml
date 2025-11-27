@@ -38,9 +38,9 @@ jobs:
           tools: tauri-cli
 
       - name: 配置 pnpm
-        uses: puniyu/setup-pnpm@main
+        uses: pnpm/action-setup@v4
         with:
-          pnpm-version: 10
+          version: 10.23.0
 
       - name: 构建
         run: |
@@ -58,17 +58,17 @@ jobs:
 
       - name: 生成构建信息
         shell: bash
-        run: |    
+        run: |
           VERSION=$(jq -r '.version' piccy_app/tauri.conf.json)
           NAME=$(jq -r '.productName' piccy_app/tauri.conf.json)
-      
+          
           echo "## Windows桌面应用构建完成" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 应用信息" >> $GITHUB_STEP_SUMMARY
           echo "- **应用名称:** `${NAME}`" >> $GITHUB_STEP_SUMMARY
           echo "- **平台:** `${{ matrix.platform.label }}`" >> $GITHUB_STEP_SUMMARY
           echo "- **版本:** `${VERSION}`" >> $GITHUB_STEP_SUMMARY
-        
+  
 
   build_linux:
     runs-on: ${{ matrix.platform.runner }}
@@ -107,9 +107,9 @@ jobs:
           packages: gcc-aarch64-linux-gnu libwebkit2gtk-4.1-dev:arm64
 
       - name: 配置 pnpm
-        uses: puniyu/setup-pnpm@main
+        uses: pnpm/action-setup@v4
         with:
-          pnpm-version: 10
+          version: 10.23.0
 
       - name: 构建
         run: |
@@ -150,6 +150,11 @@ jobs:
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: 设置 rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets:
+
+      - name: 设置 rust
         uses: puniyu/setup-rust@main
         with:
           target: ${{ matrix.platform.target }}
@@ -169,9 +174,9 @@ jobs:
           ndk-version: r27d
 
       - name: 配置 pnpm
-        uses: puniyu/setup-pnpm@main
+        uses: pnpm/action-setup@v4
         with:
-          pnpm-version: 10
+          version: 10.23.0
 
       - name: 设置 Android 签名
         run: |
@@ -210,6 +215,4 @@ jobs:
           echo "- **应用名称:** \`$NAME\`" >> $GITHUB_STEP_SUMMARY
           echo "- **平台:** \`${{ matrix.platform.label }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **版本:** \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
-
-            
 
