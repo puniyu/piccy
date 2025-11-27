@@ -40,7 +40,7 @@ jobs:
       - name: 配置 pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.23.0
+          version: 10.24.0
 
       - name: 构建
         run: |
@@ -109,7 +109,7 @@ jobs:
       - name: 配置 pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.23.0
+          version: 10.24.0
 
       - name: 构建
         run: |
@@ -176,7 +176,7 @@ jobs:
       - name: 配置 pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.23.0
+          version: 10.24.0
 
       - name: 设置 Android 签名
         run: |
