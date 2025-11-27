@@ -4,7 +4,7 @@
     "github>puniyu/.github//.github/renovate"
   ],
   "ignorePaths": [
-    "**/piccy_app/gen//**"
+    "**/piccy_app/gen/**"
   ],
   "packageRules": [
     {
