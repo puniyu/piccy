@@ -1,0 +1,7 @@
+{
+    "name": "@puniyu/piccy-project",
+    "version": "1.0.0",
+    "author": "wuliya",
+    "type": "module",
+    "packageManager": "pnpm@10.14.0"
+}

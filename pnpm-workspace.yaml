@@ -1,5 +1,7 @@
 packages:
-  - web
+  - piccy_app
+  - piccy_app/web
+  - piccy_node
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@tailwindcss/oxide'
