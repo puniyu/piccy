@@ -133,9 +133,10 @@ jobs:
           pattern: piccy-node*
           path: piccy-node/artifacts
 
-      - uses: pnpm/action-setup@v4
+      - name: 配置 pnpm
+        uses: puniyu/setup-pnpm@main
         with:
-          version: 10
+          pnpm-version: 10
 
       - name: 发布npm包
         run: |

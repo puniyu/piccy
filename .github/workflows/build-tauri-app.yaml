@@ -38,9 +38,9 @@ jobs:
           tools: tauri-cli
 
       - name: 配置 pnpm
-        uses: pnpm/action-setup@v4
+        uses: puniyu/setup-pnpm@main
         with:
-          version: 10
+          pnpm-version: 10
 
       - name: 构建
         run: |
@@ -106,16 +106,10 @@ jobs:
         with:
           packages: gcc-aarch64-linux-gnu libwebkit2gtk-4.1-dev:arm64
 
-      - name: 设置 rust 缓存
-        uses: swatinem/rust-cache@v2
-        with:
-          prefix-key: ${{ env.APP_NAME }}
-          shared-key: app-${{ matrix.platform.label }}
-
       - name: 配置 pnpm
-        uses: pnpm/action-setup@v4
+        uses: puniyu/setup-pnpm@main
         with:
-          version: 10
+          pnpm-version: 10
 
       - name: 构建
         run: |
@@ -156,11 +150,6 @@ jobs:
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: 设置 rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: 
-
-      - name: 设置 rust
         uses: puniyu/setup-rust@main
         with:
           target: ${{ matrix.platform.target }}
@@ -180,9 +169,9 @@ jobs:
           ndk-version: r27d
 
       - name: 配置 pnpm
-        uses: pnpm/action-setup@v4
+        uses: puniyu/setup-pnpm@main
         with:
-          version: 10
+          pnpm-version: 10
 
       - name: 设置 Android 签名
         run: |
