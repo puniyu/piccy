@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.1](https://github.com/puniyu/piccy/compare/app-v0.4.0...app-v0.4.1) (2025-11-30)
+
+
+### 🔧 其他更新
+
+* **deps:** update node packages ([db4f271](https://github.com/puniyu/piccy/commit/db4f271da21c7d2bd454149c0925b39b6eabe72d))
+* **deps:** update node packages ([49fee2d](https://github.com/puniyu/piccy/commit/49fee2dce0d7775a1c711f81ceb580cc1dc0b52e))
+* **workflows:** 更新 GitHub Actions 中的 pnpm 配置 ([cd65b3f](https://github.com/puniyu/piccy/commit/cd65b3f8821a3365b71ee67673308b7a998b37ff))
+* **workflows:** 调整GitHub Actions工作流配置 ([5bba3d8](https://github.com/puniyu/piccy/commit/5bba3d81a0c8b199464c341e061d1d3c998f780f))
+* 修正依赖 ([b38b570](https://github.com/puniyu/piccy/commit/b38b5705ff35f57409ee3ec04c1b90d307505aa8))
+
+
+### ♻️ 代码重构
+
+* **image:** 重构图像处理逻辑以提高代码一致性 ([8ae5ff2](https://github.com/puniyu/piccy/commit/8ae5ff24bba52e1eddd466327c8321e7ad22cb6c))
+
 ## [0.4.0](https://github.com/puniyu/piccy/compare/app-v0.3.0...app-v0.4.0) (2025-11-09)
 
 
