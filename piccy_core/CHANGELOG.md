@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/puniyu/piccy/compare/core-v0.4.0...core-v0.4.1) (2025-12-14)
+
+
+### ♻️ 代码重构
+
+* **image:** 重构图像处理逻辑以提高代码一致性 ([8ae5ff2](https://github.com/puniyu/piccy/commit/8ae5ff24bba52e1eddd466327c8321e7ad22cb6c))
+
 ## [0.4.0](https://github.com/puniyu/piccy/compare/core-v0.3.0...core-v0.4.0) (2025-11-09)
 
 
