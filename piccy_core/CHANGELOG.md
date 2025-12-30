@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.2](https://github.com/puniyu/piccy/compare/core-v0.4.0...core-v0.4.2) (2025-12-30)
+
+
+### ♻️ 代码重构
+
+* **gif:** 重构GIF处理功能并优化图像处理流程 ([3f3f668](https://github.com/puniyu/piccy/commit/3f3f6681e132ffbe1409a0ab59ae6cdaa6832b76))
+* **image:** 重构图像处理逻辑以提高代码一致性 ([8ae5ff2](https://github.com/puniyu/piccy/commit/8ae5ff24bba52e1eddd466327c8321e7ad22cb6c))
+
 ## [0.4.0](https://github.com/puniyu/piccy/compare/core-v0.3.0...core-v0.4.0) (2025-11-09)
 
 

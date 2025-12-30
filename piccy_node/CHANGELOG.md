@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.2](https://github.com/puniyu/piccy/compare/node-v0.4.1...node-v0.4.2) (2025-12-30)
+
+
+### 🔧 其他更新
+
+* **deps:** update node packages ([42188a0](https://github.com/puniyu/piccy/commit/42188a0b84754fc3220ee478b925fa51e545c712))
+* **deps:** update node packages ([ac7338b](https://github.com/puniyu/piccy/commit/ac7338b2024685256881c057be6fbe423b046882))
+* **deps:** update node packages ([fbe594e](https://github.com/puniyu/piccy/commit/fbe594ee094d6d58d410b96a7b5d26c9905ec2d1))
+* **deps:** update node packages ([49fee2d](https://github.com/puniyu/piccy/commit/49fee2dce0d7775a1c711f81ceb580cc1dc0b52e))
+* **deps:** 移除自定义 renovate 配置规则 ([266d6b6](https://github.com/puniyu/piccy/commit/266d6b6e2a59a4cce57c9adac4f34b42531b526b))
+
+
+### ♻️ 代码重构
+
+* **image:** 重构图像处理逻辑以提高代码一致性 ([8ae5ff2](https://github.com/puniyu/piccy/commit/8ae5ff24bba52e1eddd466327c8321e7ad22cb6c))
+
 ## [0.4.1](https://github.com/puniyu/piccy/compare/node-v0.4.0...node-v0.4.1) (2025-11-09)
 
 
