@@ -11,7 +11,7 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-image = { version = "0.25.8" }
+image = { version = "0.25.8", features = ["color_quant"] }
 base64 = "0.22.1"
 
 serde.workspace = true

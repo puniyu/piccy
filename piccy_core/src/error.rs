@@ -6,8 +6,8 @@ pub enum Error {
     Image(#[from] image::ImageError),
     #[error("IO错误: {0}")]
     Io(#[from] std::io::Error),
-    #[error("Base64编码错误: {0}")]
-    Base64(#[from] base64::DecodeError),
+    #[error("Base64解码错误: {0}")]
+    Decode(#[from] base64::DecodeError),
     #[error("其他错误: {0}")]
     Other(String),
 }

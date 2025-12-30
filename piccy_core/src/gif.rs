@@ -51,16 +51,8 @@ impl Gif {
             return Err(Error::Other("当前不是动图".to_string()))?;
         }
 
-        let reversed_frames: Vec<Frame> = frames.into_iter().rev().collect();
-
-        let mut buffer = Vec::new();
-        {
-            let mut encoder = image::codecs::gif::GifEncoder::new(&mut buffer);
-            encoder.set_repeat(Repeat::Infinite)?;
-            encoder.encode_frames(reversed_frames.into_iter())?;
-        }
-
-        Ok(buffer)
+        let frames: Vec<Frame> = frames.into_iter().rev().collect();
+        encode_gif(frames)
     }
 
     /// gif变速
@@ -79,7 +71,7 @@ impl Gif {
         }
 
         let delay = image::Delay::from_saturating_duration(duration);
-        let modified_frames: Vec<Frame> = frames
+        let frames: Vec<Frame> = frames
             .into_iter()
             .map(|frame| {
                 let left = frame.left();
@@ -88,15 +80,7 @@ impl Gif {
                 Frame::from_parts(buffer, left, top, delay)
             })
             .collect();
-
-        let mut buffer = Vec::new();
-        {
-            let mut encoder = image::codecs::gif::GifEncoder::new(&mut buffer);
-            encoder.set_repeat(Repeat::Infinite)?;
-            encoder.encode_frames(modified_frames.into_iter())?;
-        }
-
-        Ok(buffer)
+        encode_gif(frames)
     }
 }
 
@@ -111,33 +95,40 @@ pub fn gif_merge(images: Vec<ImageBuilder>, duration: Option<Duration>) -> Resul
         return Err(Error::Other("至少需要一个图片".to_string()));
     }
 
-    let cursor = Cursor::new(images.first().unwrap().0.as_slice());
-    let reader = ImageReader::new(cursor).with_guessed_format()?;
-    let image_info = reader.into_dimensions()?;
-    let (width, height) = image_info;
+    let first_image_data = images
+        .first()
+        .ok_or_else(|| Error::Other("图片列表为空".to_string()))?
+        .0
+        .as_slice();
+    let (width, height) = {
+        let cursor = Cursor::new(first_image_data);
+        let reader = ImageReader::new(cursor).with_guessed_format()?;
+        reader.into_dimensions()?
+    };
+    let frame_duration = duration.unwrap_or(Duration::from_millis(20));
 
-    let frames = images
+    let frames: Result<Vec<Frame>> = images
         .into_par_iter()
         .map(|img_builder| {
             let data = img_builder.0.as_slice();
             let cursor = Cursor::new(data);
-            let reader = ImageReader::new(cursor).with_guessed_format()?;
-            let image = reader.decode()?;
+            let image = ImageReader::new(cursor).with_guessed_format()?.decode()?;
             let resized_image =
                 image.resize_exact(width, height, image::imageops::FilterType::Lanczos3);
-            let frame = Frame::from_parts(
+
+            Ok(Frame::from_parts(
                 resized_image.into(),
                 0,
                 0,
-                image::Delay::from_saturating_duration(
-                    duration.unwrap_or(Duration::from_secs(0.02 as u64)),
-                ),
-            );
-            Ok(frame)
+                image::Delay::from_saturating_duration(frame_duration),
+            ))
         })
-        .collect::<Result<Vec<Frame>>>();
+        .collect();
     let frames = frames?;
+    encode_gif(frames)
+}
 
+fn encode_gif(frames: Vec<Frame>) -> Result<Vec<u8>> {
     let mut buffer = Vec::new();
     {
         let mut encoder = image::codecs::gif::GifEncoder::new(&mut buffer);

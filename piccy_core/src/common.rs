@@ -9,18 +9,18 @@ pub struct AnimationInfo {
 impl From<&[image::Frame]> for AnimationInfo {
     fn from(frames: &[image::Frame]) -> Self {
         let frame_count = frames.len() as u32;
-        let duration = if frame_count > 1 {
-            let total_duration = frames
+        let frame_delay = if frame_count > 0 {
+            let avg_delay: u64 = frames
                 .iter()
-                .map(|frame| frame.delay().numer_denom_ms().0)
-                .sum::<u32>();
-            Some((total_duration as f32 / 1000.0) / frame_count as f32)
+                .map(|frame| frame.delay().numer_denom_ms().0 as u64)
+                .sum::<u64>() / frame_count.max(1) as u64;
+            Some(avg_delay as f32)
         } else {
-            Some(0.0f32)
+            None
         };
         Self {
             frame_count,
-            frame_delay: duration,
+            frame_delay,
         }
     }
 }
