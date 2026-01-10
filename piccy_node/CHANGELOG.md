@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/puniyu/piccy/compare/node-v0.4.2...node-v0.4.3) (2026-01-10)
+
+
+### 🔧 其他更新
+
+* **node:** Synchronize piccy versions
+
 ## [0.4.2](https://github.com/puniyu/piccy/compare/node-v0.4.1...node-v0.4.2) (2025-12-30)
 
 
