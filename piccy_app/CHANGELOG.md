@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/puniyu/piccy/compare/app-v0.4.2...app-v0.4.3) (2026-01-10)
+
+
+### 🔧 其他更新
+
+* **app:** Synchronize piccy versions
+
 ## [0.4.2](https://github.com/puniyu/piccy/compare/app-v0.4.0...app-v0.4.2) (2025-12-30)
 
 

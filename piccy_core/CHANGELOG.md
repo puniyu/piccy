@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/puniyu/piccy/compare/core-v0.4.2...core-v0.4.3) (2026-01-10)
+
+
+### 🔧 其他更新
+
+* **deps:** update rust crate imageproc to 0.26.0 ([77feb3b](https://github.com/puniyu/piccy/commit/77feb3b966d2dfdab5847f5eff39213ebb83fa25))
+
 ## [0.4.2](https://github.com/puniyu/piccy/compare/core-v0.4.0...core-v0.4.2) (2025-12-30)
 
 
