@@ -18,8 +18,9 @@ napi = { version = "3.0.0", features = [] }
 napi-derive = "3.0.0"
 
 serde.workspace = true
+image.workspace = true
 
-piccy_core = { path = "../piccy_core" }
+piccy_core = { version = "0.4.2", path = "../piccy_core" }
 
 
 [build-dependencies]

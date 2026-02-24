@@ -1,15 +1,12 @@
 use crate::error::Error;
-use piccy_core::image;
+use piccy_core::{Image, ImageInfo};
 use tauri::ipc::Response;
 use tauri::{AppHandle, Manager, Runtime, command};
 
 #[command]
-pub(crate) fn image_info(image: Vec<u8>) -> tauri::Result<image::ImageInfo> {
-    let image = image::ImageBuilder::new()
-        .with_buffer(image).build();
-    image
-        .info()
-        .map_err(|e| tauri::Error::from(Error::from(e)))
+pub(crate) fn image_info(image: Vec<u8>) -> tauri::Result<ImageInfo> {
+    let image = Image::builder().with_buffer(image).build();
+    image.info().map_err(|e| tauri::Error::from(Error::from(e)))
 }
 #[command]
 pub(crate) fn image_crop(
@@ -19,15 +16,14 @@ pub(crate) fn image_crop(
     width: Option<u32>,
     height: Option<u32>,
 ) -> tauri::Result<Response> {
-    let image = image::ImageBuilder::new()
-        .with_buffer(image).build();
+    let image = Image::builder().with_buffer(image).build();
 
     let result = image
         .crop(left, top, width, height)
         .map_err(|e| tauri::Error::from(Error::from(e)));
 
     match result {
-        Ok(data) => Ok(Response::new(data)),
+        Ok(data) => Ok(Response::new(data.to_vec())),
         Err(e) => Err(e),
     }
 }

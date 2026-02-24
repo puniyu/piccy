@@ -1,32 +1,14 @@
-#[derive(Debug, Clone)]
-pub struct AnimationInfo {
-    /// 帧数
-    pub frame_count: u32,
-    /// 帧间隔时间（毫秒）
-    pub frame_delay: Option<f32>,
-}
+use bytes::Bytes;
+use image::codecs::gif::Repeat;
+use image::Frame;
 
-impl From<&[image::Frame]> for AnimationInfo {
-    fn from(frames: &[image::Frame]) -> Self {
-        let frame_count = frames.len() as u32;
-        let frame_delay = if frame_count > 0 {
-            let avg_delay: u64 = frames
-                .iter()
-                .map(|frame| frame.delay().numer_denom_ms().0 as u64)
-                .sum::<u64>() / frame_count.max(1) as u64;
-            Some(avg_delay as f32)
-        } else {
-            None
-        };
-        Self {
-            frame_count,
-            frame_delay,
-        }
-    }
-}
 
-impl From<Vec<image::Frame>> for AnimationInfo {
-    fn from(frames: Vec<image::Frame>) -> Self {
-        frames.as_slice().into()
+pub(crate) fn encode_gif(frames: Vec<Frame>) -> crate::Result<Bytes> {
+    let mut buffer = Vec::new();
+    {
+        let mut encoder = image::codecs::gif::GifEncoder::new(&mut buffer);
+        encoder.set_repeat(Repeat::Infinite)?;
+        encoder.encode_frames(frames.into_iter())?;
     }
+    Ok(buffer.into())
 }
