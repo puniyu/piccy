@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/puniyu/piccy/compare/core-v0.4.3...core-v0.5.0) (2026-02-25)
+
+
+### ✨ 新功能
+
+* **core:** 增强图像处理功能并优化参数处理 ([96b2711](https://github.com/puniyu/piccy/commit/96b271154128e95dbffaa78738b5dce7dd213d51))
+* **node:** 重构Node.js绑定为面向对象API并增强功能 ([96b2711](https://github.com/puniyu/piccy/commit/96b271154128e95dbffaa78738b5dce7dd213d51))
+
 ## [0.4.3](https://github.com/puniyu/piccy/compare/core-v0.4.2...core-v0.4.3) (2026-02-25)
 
 

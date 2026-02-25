@@ -1,6 +1,6 @@
 {
   "name": "@puniyu/piccy",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "image tool",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
