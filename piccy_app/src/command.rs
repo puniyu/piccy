@@ -5,7 +5,7 @@ use tauri::{AppHandle, Manager, Runtime, command};
 
 #[command]
 pub(crate) fn image_info(image: Vec<u8>) -> tauri::Result<ImageInfo> {
-    let image = Image::builder().with_buffer(image).build();
+    let image = Image::from_bytes(image);
     image.info().map_err(|e| tauri::Error::from(Error::from(e)))
 }
 #[command]
@@ -16,14 +16,19 @@ pub(crate) fn image_crop(
     width: Option<u32>,
     height: Option<u32>,
 ) -> tauri::Result<Response> {
-    let image = Image::builder().with_buffer(image).build();
+    let img = Image::from_bytes(image);
 
-    let result = image
-        .crop(left, top, width, height)
+    let result = img
+        .crop(
+            left.unwrap_or(0),
+            top.unwrap_or(0),
+            width.unwrap_or(100),
+            height.unwrap_or(100),
+        )
         .map_err(|e| tauri::Error::from(Error::from(e)));
 
     match result {
-        Ok(data) => Ok(Response::new(data.to_vec())),
+        Ok(data) => Ok(Response::new(data.into_bytes().to_vec())),
         Err(e) => Err(e),
     }
 }

@@ -15,7 +15,8 @@ impl From<&[Frame]> for AnimationInfo {
             let avg_delay: u64 = frames
                 .iter()
                 .map(|frame| frame.delay().numer_denom_ms().0 as u64)
-                .sum::<u64>() / frame_count.max(1) as u64;
+                .sum::<u64>()
+                / frame_count.max(1) as u64;
             Some(avg_delay as f32)
         } else {
             None
@@ -63,4 +64,11 @@ pub enum MergeMode {
     Horizontal,
     /// 垂直拼接
     Vertical,
+}
+
+#[derive(Debug, Clone)]
+pub enum ImageFormat {
+    Png,
+    Jpeg,
+    WebP,
 }

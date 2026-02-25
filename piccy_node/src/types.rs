@@ -1,4 +1,3 @@
-use image::Rgb;
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 
@@ -24,7 +23,7 @@ impl From<piccy_core::ImageInfo> for ImageInfo {
             height: result.height,
             is_multi_frame: result.is_multi_frame,
             frame_count: result.frame_count,
-            average_duration: result.average_duration.map(|d| d as f64),
+            average_duration: result.average_duration.map(Into::into),
         }
     }
 }
@@ -39,8 +38,8 @@ pub enum FlipMode {
 }
 
 impl From<FlipMode> for piccy_core::FlipMode {
-    fn from(other: FlipMode) -> Self {
-        match other {
+    fn from(mode: FlipMode) -> Self {
+        match mode {
             FlipMode::Horizontal => piccy_core::FlipMode::Horizontal,
             FlipMode::Vertical => piccy_core::FlipMode::Vertical,
         }
@@ -58,11 +57,28 @@ pub enum MergeMode {
 }
 
 impl From<MergeMode> for piccy_core::MergeMode {
-    fn from(other: MergeMode) -> Self {
-        match other {
+    fn from(mode: MergeMode) -> Self {
+        match mode {
             MergeMode::Horizontal => piccy_core::MergeMode::Horizontal,
             MergeMode::Vertical => piccy_core::MergeMode::Vertical,
         }
     }
 }
 
+#[derive(Debug, Clone)]
+#[napi]
+pub enum ImageFormat {
+    Png,
+    Jpeg,
+    WebP,
+}
+
+impl From<ImageFormat> for piccy_core::ImageFormat {
+    fn from(image: ImageFormat) -> Self {
+        match image {
+            ImageFormat::Png => piccy_core::ImageFormat::Png,
+            ImageFormat::Jpeg => piccy_core::ImageFormat::Jpeg,
+            ImageFormat::WebP => piccy_core::ImageFormat::WebP,
+        }
+    }
+}
