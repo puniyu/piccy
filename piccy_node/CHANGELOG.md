@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.4.3](https://github.com/puniyu/piccy/compare/node-v0.4.2...node-v0.4.3) (2026-02-25)
+
+
+### ♻️ 代码重构
+
+* **image:** 重构图像处理库的核心功能实现 ([2dde377](https://github.com/puniyu/piccy/commit/2dde377b90c7f7572f48a99c81db847da964d623))
+* **piccy_core:** 重构图像处理库核心功能 ([4eb562d](https://github.com/puniyu/piccy/commit/4eb562d5a6547371534bee398fee8415c5e20d9f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * piccy_core bumped from 0.4.2 to 0.4.3
+
 ## [0.4.2](https://github.com/puniyu/piccy/compare/node-v0.4.1...node-v0.4.2) (2025-12-30)
 
 
