@@ -49,18 +49,20 @@ pub struct ImageInfo {
 }
 
 /// 图像翻转模式
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub enum FlipMode {
     /// 水平翻转
+    #[default]
     Horizontal,
     /// 垂直翻转
     Vertical,
 }
 
 /// 图像拼接模式
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub enum MergeMode {
     /// 水平拼接
+    #[default]
     Horizontal,
     /// 垂直拼接
     Vertical,

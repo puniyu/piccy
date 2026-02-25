@@ -197,12 +197,13 @@ impl Image {
     ///
     /// # 参数
     /// - `mode`: 翻转模式
-    pub fn flip(self, mode: FlipMode) -> Result<Self> {
+    pub fn flip(self, mode: Option<FlipMode>) -> Result<Self> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
         let image = reader.decode()?;
 
+        let mode = mode.unwrap_or_default();
         let flipped = match mode {
             FlipMode::Horizontal => image.fliph(),
             FlipMode::Vertical => image.flipv(),
@@ -337,9 +338,7 @@ impl Image {
 
     /// 分离动图帧
     ///
-    /// # 返回值
-    /// 返回所有帧的字节数据（PNG 格式）
-    pub fn split(&self) -> Result<Vec<Self>> {
+    pub fn split(self) -> Result<Vec<Self>> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -474,16 +473,15 @@ impl Image {
     /// 拼接图片
     ///
     /// # 参数
-    /// - `images`: 需要拼接的图片实例
+    /// - `images`: 需要拼接的其他图片
     /// - `mode`: 拼接模式
-    pub fn merge(images: Vec<Image>, mode: MergeMode) -> Result<Self> {
+    pub fn merge(self, images: Vec<&Image>, mode: Option<MergeMode>) -> Result<Self> {
         use image::ImageFormat;
         use image::imageops;
-        if images.is_empty() {
-            return Err(Error::Other("至少需要一个图片".to_string()));
-        }
+        let mut all_images = vec![self];
+        all_images.extend(images.iter().map(|img| (*img).clone()));
 
-        let decoded_images: Result<Vec<DynamicImage>> = images
+        let decoded_images: Result<Vec<DynamicImage>> = all_images
             .into_iter()
             .map(|img| {
                 let cursor = Cursor::new(&img.0);
@@ -497,6 +495,7 @@ impl Image {
         if decoded_images.is_empty() {
             return Err(Error::Other("没有有效的图像数据".to_string()));
         }
+        let mode = mode.unwrap_or_default();
 
         let merged_image = match mode {
             MergeMode::Horizontal => {
@@ -554,22 +553,23 @@ impl Image {
     /// GIF 拼接
     ///
     /// # 参数
-    /// - `images`: 图片列表
+    /// - `images`: 其他图片列表
     /// - `duration`: 帧间隔时间
-    pub fn merge_gif(images: Vec<Image>, duration: Option<Duration>) -> Result<Image> {
-        if images.is_empty() {
+    pub fn merge_gif(self, images: Vec<&Image>, duration: Option<Duration>) -> Result<Self> {
+        let mut all_images = vec![self];
+        all_images.extend(images.iter().map(|img| (*img).clone()));
+
+        if all_images.is_empty() {
             return Err(Error::Other("至少需要一个图片".to_string()));
         }
 
-        let first_image = images
-            .first()
-            .ok_or_else(|| Error::Other("图片列表为空".to_string()))?;
+        let first_image = all_images.first().unwrap();
         let info = first_image.info()?;
         let width = info.width;
         let height = info.height;
         let frame_duration = duration.unwrap_or(Duration::from_millis(20));
 
-        let frames: Result<Vec<Frame>> = images
+        let frames: Result<Vec<Frame>> = all_images
             .into_par_iter()
             .map(|image| {
                 let cursor = Cursor::new(&image.0);
@@ -584,6 +584,6 @@ impl Image {
             })
             .collect();
 
-        encode_gif(frames?).map(Image)
+        encode_gif(frames?).map(Self)
     }
 }

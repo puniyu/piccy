@@ -82,3 +82,16 @@ impl From<ImageFormat> for piccy_core::ImageFormat {
         }
     }
 }
+
+#[napi(object)]
+pub struct Rgb {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+}
+
+impl From<Rgb> for image::Rgb<u8> {
+    fn from(value: Rgb) -> Self {
+        Self::from([value.r, value.g, value.b])
+    }
+}
