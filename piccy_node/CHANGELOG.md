@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.1](https://github.com/puniyu/piccy/compare/node-v0.5.0...node-v0.5.1) (2026-03-06)
+
+
+### ⚡️ 性能优化
+
+* **image:** 改进图像处理功能并国际化错误消息 ([a2ac3c8](https://github.com/puniyu/piccy/commit/a2ac3c8ead38145ed87ca7f099f12af15e48f7bd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * piccy_core bumped from 0.5.0 to 0.5.1
+
 ## [0.5.0](https://github.com/puniyu/piccy/compare/node-v0.4.3...node-v0.5.0) (2026-02-25)
 
 
