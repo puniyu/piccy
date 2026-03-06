@@ -34,6 +34,12 @@ impl From<Vec<Frame>> for AnimationInfo {
     }
 }
 
+impl From<&Vec<Frame>> for AnimationInfo {
+    fn from(frames: &Vec<Frame>) -> Self {
+        frames.as_slice().into()
+    }
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ImageInfo {
     /// 图像宽度

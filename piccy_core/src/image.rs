@@ -10,6 +10,10 @@ use image::{
     DynamicImage::ImageRgba8,
     Frame, GenericImageView, ImageReader, Rgb, RgbaImage,
     codecs::{gif::GifDecoder, webp::WebPDecoder},
+    error::{
+        ImageError, ImageFormatHint, ParameterError, ParameterErrorKind, UnsupportedError,
+        UnsupportedErrorKind,
+    },
     imageops::FilterType,
 };
 use rayon::iter::IntoParallelIterator;
@@ -49,26 +53,30 @@ impl Image {
         let reader = ImageReader::new(cursor).with_guessed_format()?;
         match reader.format() {
             Some(ImageFormat::Gif) => {
-                let image = reader.decode()?;
                 let decoder = GifDecoder::new(Cursor::new(&self.0))?;
                 let frames = decoder.into_frames().collect_frames()?;
-                let animation_info = AnimationInfo::from(frames);
+                let animation_info = AnimationInfo::from(&frames);
+                let (width, height) = frames.first()
+                    .map(|f| (f.buffer().width(), f.buffer().height()))
+                    .unwrap_or((0, 0));
                 Ok(ImageInfo {
-                    width: image.width(),
-                    height: image.height(),
+                    width,
+                    height,
                     is_multi_frame: animation_info.frame_count > 1,
                     frame_count: Some(animation_info.frame_count),
                     average_duration: animation_info.frame_delay,
                 })
             }
             Some(ImageFormat::WebP) => {
-                let image = reader.decode()?;
                 let decoder = WebPDecoder::new(Cursor::new(&self.0))?;
                 let frames = decoder.into_frames().collect_frames()?;
-                let animation_info = AnimationInfo::from(frames);
+                let animation_info = AnimationInfo::from(&frames);
+                let (width, height) = frames.first()
+                    .map(|f| (f.buffer().width(), f.buffer().height()))
+                    .unwrap_or((0, 0));
                 Ok(ImageInfo {
-                    width: image.width(),
-                    height: image.height(),
+                    width,
+                    height,
                     is_multi_frame: animation_info.frame_count > 1,
                     frame_count: Some(animation_info.frame_count),
                     average_duration: animation_info.frame_delay,
@@ -137,7 +145,7 @@ impl Image {
     /// - `y`: 裁剪的左上角 Y 坐标
     /// - `width`: 裁剪的宽度
     /// - `height`: 裁剪的高度
-    pub fn crop(self, x: u32, y: u32, width: u32, height: u32) -> Result<Self> {
+    pub fn crop(&self, x: u32, y: u32, width: u32, height: u32) -> Result<Self> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -145,7 +153,10 @@ impl Image {
 
         let (image_width, image_height) = (image.width(), image.height());
         if x + width > image_width || y + height > image_height {
-            return Err(Error::Other("裁剪区域超出图像范围".to_string()));
+            return Err(ImageError::Parameter(ParameterError::from_kind(
+                ParameterErrorKind::DimensionMismatch,
+            ))
+            .into());
         }
 
         let cropped = image.view(x, y, width, height).to_image();
@@ -159,7 +170,7 @@ impl Image {
     /// # 参数
     /// - `width`: 缩放后的宽度
     /// - `height`: 缩放后的高度
-    pub fn resize(self, width: u32, height: u32) -> Result<Self> {
+    pub fn resize(&self, width: u32, height: u32) -> Result<Self> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -175,7 +186,7 @@ impl Image {
     ///
     /// # 参数
     /// - `angle`: 旋转的角度（度）
-    pub fn rotate(self, angle: f32) -> Result<Self> {
+    pub fn rotate(&self, angle: f32) -> Result<Self> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -197,7 +208,7 @@ impl Image {
     ///
     /// # 参数
     /// - `mode`: 翻转模式
-    pub fn flip(self, mode: Option<FlipMode>) -> Result<Self> {
+    pub fn flip(&self, mode: Option<FlipMode>) -> Result<Self> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -215,7 +226,7 @@ impl Image {
     }
 
     /// 灰度化图像
-    pub fn grayscale(self) -> Result<Self> {
+    pub fn grayscale(&self) -> Result<Self> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -228,7 +239,7 @@ impl Image {
     }
 
     /// 反色图像
-    pub fn invert(self) -> Result<Self> {
+    pub fn invert(&self) -> Result<Self> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -248,7 +259,7 @@ impl Image {
     ///
     /// # 参数
     /// - `color`: RGB 颜色值
-    pub fn color_mask(self, color: Rgb<u8>) -> Result<Self> {
+    pub fn color_mask(&self, color: Rgb<u8>) -> Result<Self> {
         use image::ImageFormat;
         let Rgb([r, g, b]) = color;
 
@@ -279,7 +290,7 @@ impl Image {
     ///
     /// # 参数
     /// - `hidden`: 需要隐藏的图片
-    pub fn mirage(self, hidden: Self) -> Result<Self> {
+    pub fn mirage(&self, hidden: &Self) -> Result<Self> {
         use image::ImageFormat;
         let wlight = 1.0f32;
         let blight = 0.5f32;
@@ -338,7 +349,7 @@ impl Image {
 
     /// 分离动图帧
     ///
-    pub fn split(self) -> Result<Vec<Self>> {
+    pub fn split(&self) -> Result<Vec<Self>> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -349,7 +360,13 @@ impl Image {
                 let frames = decoder.into_frames().collect_frames()?;
 
                 if frames.len() <= 1 {
-                    return Err(Error::Other("当前不是动图".to_string()));
+                    return Err(
+                        ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                            ImageFormatHint::Unknown,
+                            UnsupportedErrorKind::GenericFeature("animation".to_string()),
+                        ))
+                        .into(),
+                    );
                 }
                 frames
                     .into_iter()
@@ -366,7 +383,13 @@ impl Image {
                 let frames = decoder.into_frames().collect_frames()?;
 
                 if frames.len() <= 1 {
-                    return Err(Error::Other("当前不是动图".to_string()));
+                    return Err(
+                        ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                            ImageFormatHint::Unknown,
+                            UnsupportedErrorKind::GenericFeature("animation".to_string()),
+                        ))
+                        .into(),
+                    );
                 }
 
                 frames
@@ -379,12 +402,18 @@ impl Image {
                     })
                     .collect()
             }
-            _ => Err(Error::Other("当前不是动图".to_string())),
+            _ => Err(
+                ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                    ImageFormatHint::Unknown,
+                    UnsupportedErrorKind::GenericFeature("animation".to_string()),
+                ))
+                .into(),
+            ),
         }
     }
 
     /// 反转动图帧顺序
-    pub fn reverse(self) -> Result<Self> {
+    pub fn reverse(&self) -> Result<Self> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -395,7 +424,13 @@ impl Image {
                 let frames = decoder.into_frames().collect_frames()?;
 
                 if frames.len() <= 1 {
-                    return Err(Error::Other("当前不是动图".to_string()));
+                    return Err(
+                        ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                            ImageFormatHint::Unknown,
+                            UnsupportedErrorKind::GenericFeature("animation".to_string()),
+                        ))
+                        .into(),
+                    );
                 }
 
                 let reversed_frames: Vec<Frame> = frames.into_iter().rev().collect();
@@ -406,13 +441,25 @@ impl Image {
                 let frames = decoder.into_frames().collect_frames()?;
 
                 if frames.len() <= 1 {
-                    return Err(Error::Other("当前不是动图".to_string()));
+                    return Err(
+                        ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                            ImageFormatHint::Unknown,
+                            UnsupportedErrorKind::GenericFeature("animation".to_string()),
+                        ))
+                        .into(),
+                    );
                 }
 
                 let reversed_frames: Vec<Frame> = frames.into_iter().rev().collect();
                 encode_gif(reversed_frames).map(Self)
             }
-            _ => Err(Error::Other("当前不是动图".to_string())),
+            _ => Err(
+                ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                    ImageFormatHint::Unknown,
+                    UnsupportedErrorKind::GenericFeature("animation".to_string()),
+                ))
+                .into(),
+            ),
         }
     }
 
@@ -420,7 +467,7 @@ impl Image {
     ///
     /// # 参数
     /// - `duration`: 帧间隔时间
-    pub fn change_duration(self, duration: Duration) -> Result<Self> {
+    pub fn change_duration(&self, duration: Duration) -> Result<Self> {
         use image::ImageFormat;
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -431,7 +478,13 @@ impl Image {
                 let frames = decoder.into_frames().collect_frames()?;
 
                 if frames.len() <= 1 {
-                    return Err(Error::Other("当前不是动图".to_string()));
+                    return Err(
+                        ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                            ImageFormatHint::Unknown,
+                            UnsupportedErrorKind::GenericFeature("animation".to_string()),
+                        ))
+                        .into(),
+                    );
                 }
 
                 let delay = image::Delay::from_saturating_duration(duration);
@@ -451,7 +504,13 @@ impl Image {
                 let frames = decoder.into_frames().collect_frames()?;
 
                 if frames.len() <= 1 {
-                    return Err(Error::Other("当前不是动图".to_string()));
+                    return Err(
+                        ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                            ImageFormatHint::Unknown,
+                            UnsupportedErrorKind::GenericFeature("animation".to_string()),
+                        ))
+                        .into(),
+                    );
                 }
 
                 let delay = image::Delay::from_saturating_duration(duration);
@@ -466,7 +525,13 @@ impl Image {
                     .collect();
                 encode_gif(frames).map(Self)
             }
-            _ => Err(Error::Other("当前不是动图".to_string())),
+            _ => Err(
+                ImageError::Unsupported(UnsupportedError::from_format_and_kind(
+                    ImageFormatHint::Unknown,
+                    UnsupportedErrorKind::GenericFeature("animation".to_string()),
+                ))
+                .into(),
+            ),
         }
     }
 
@@ -475,14 +540,15 @@ impl Image {
     /// # 参数
     /// - `images`: 需要拼接的其他图片
     /// - `mode`: 拼接模式
-    pub fn merge(self, images: Vec<&Image>, mode: Option<MergeMode>) -> Result<Self> {
+    pub fn merge(&self, images: Vec<&Image>, mode: Option<MergeMode>) -> Result<Self> {
         use image::ImageFormat;
         use image::imageops;
-        let mut all_images = vec![self];
-        all_images.extend(images.iter().map(|img| (*img).clone()));
+        let mut all_images: Vec<&Image> = Vec::with_capacity(1 + images.len());
+        all_images.push(self);
+        all_images.extend(images);
 
         let decoded_images: Result<Vec<DynamicImage>> = all_images
-            .into_iter()
+            .iter()
             .map(|img| {
                 let cursor = Cursor::new(&img.0);
                 let reader = ImageReader::new(cursor).with_guessed_format()?;
@@ -493,7 +559,7 @@ impl Image {
         let decoded_images = decoded_images?;
 
         if decoded_images.is_empty() {
-            return Err(Error::Other("没有有效的图像数据".to_string()));
+            return Err(Error::Other("No valid image data".to_string()));
         }
         let mode = mode.unwrap_or_default();
 
@@ -555,12 +621,13 @@ impl Image {
     /// # 参数
     /// - `images`: 其他图片列表
     /// - `duration`: 帧间隔时间
-    pub fn merge_gif(self, images: Vec<&Image>, duration: Option<Duration>) -> Result<Self> {
-        let mut all_images = vec![self];
-        all_images.extend(images.iter().map(|img| (*img).clone()));
+    pub fn merge_gif(&self, images: Vec<&Image>, duration: Option<Duration>) -> Result<Self> {
+        let mut all_images: Vec<&Image> = Vec::with_capacity(1 + images.len());
+        all_images.push(self);
+        all_images.extend(images);
 
         if all_images.is_empty() {
-            return Err(Error::Other("至少需要一个图片".to_string()));
+            return Err(Error::Other("At least one image is required".to_string()));
         }
 
         let first_image = all_images.first().unwrap();

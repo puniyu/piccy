@@ -131,7 +131,6 @@ impl Image {
     pub fn crop(&self, x: u32, y: u32, width: u32, height: u32) -> Result<Self> {
         let inner = self
             .inner
-            .clone()
             .crop(x, y, width, height)
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -146,7 +145,6 @@ impl Image {
     pub fn resize(&self, width: u32, height: u32) -> Result<Image> {
         let inner = self
             .inner
-            .clone()
             .resize(width, height)
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -160,7 +158,6 @@ impl Image {
     pub fn rotate(&self, angle: f64) -> Result<Image> {
         let inner = self
             .inner
-            .clone()
             .rotate(angle as f32)
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -174,7 +171,6 @@ impl Image {
     pub fn flip(&self, mode: Option<FlipMode>) -> Result<Self> {
         let inner = self
             .inner
-            .clone()
             .flip(mode.map(Into::into))
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -185,7 +181,6 @@ impl Image {
     pub fn grayscale(&self) -> Result<Image> {
         let inner = self
             .inner
-            .clone()
             .grayscale()
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -196,7 +191,6 @@ impl Image {
     pub fn invert(&self) -> Result<Image> {
         let inner = self
             .inner
-            .clone()
             .invert()
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -210,7 +204,6 @@ impl Image {
     pub fn color_mask(&self, rgb: Rgb) -> Result<Image> {
         let inner = self
             .inner
-            .clone()
             .color_mask(rgb.into())
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -224,8 +217,7 @@ impl Image {
     pub fn mirage(&self, hidden: &Image) -> Result<Image> {
         let inner = self
             .inner
-            .clone()
-            .mirage(hidden.inner.clone())
+            .mirage(&hidden.inner)
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
     }
@@ -238,7 +230,6 @@ impl Image {
     pub fn split(&self) -> Result<Vec<Image>> {
         let frames = self
             .inner
-            .clone()
             .split()
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(frames.into_iter().map(|inner| Self { inner }).collect())
@@ -249,7 +240,6 @@ impl Image {
     pub fn reverse(&self) -> Result<Image> {
         let inner = self
             .inner
-            .clone()
             .reverse()
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -263,7 +253,6 @@ impl Image {
     pub fn change_duration(&self, duration: u32) -> Result<Image> {
         let inner = self
             .inner
-            .clone()
             .change_duration(Duration::from_secs(duration as u64))
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -279,7 +268,6 @@ impl Image {
         let inner_images: Vec<&piccy_core::Image> = images.iter().map(|img| &img.inner).collect();
         let inner = self
             .inner
-            .clone()
             .merge(inner_images, mode.map(Into::into))
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
@@ -296,7 +284,6 @@ impl Image {
         let delay = duration.map(|d| Duration::from_secs(d as u64));
         let inner = self
             .inner
-            .clone()
             .merge_gif(inner_images, delay)
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
