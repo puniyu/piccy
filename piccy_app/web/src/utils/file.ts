@@ -10,7 +10,6 @@ export const download_file = async (image_data: ArrayBuffer): Promise<void> => {
       description: `文件已保存至 ${path}`,
       type: "success",
       duration: 4000,
-      closable: true,
     });
   } catch (error) {
     toaster.create({
@@ -18,7 +17,6 @@ export const download_file = async (image_data: ArrayBuffer): Promise<void> => {
       description: String(error),
       type: "error",
       duration: 4000,
-      closable: true,
     });
     throw error;
   }
