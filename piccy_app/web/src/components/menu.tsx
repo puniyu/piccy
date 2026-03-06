@@ -1,48 +1,74 @@
-import { Info, Crop } from "lucide-react";
+import { Button } from "@heroui/react";
+import { Info, Crop, RotateCw, Maximize2, FlipHorizontal, Palette, Contrast } from "lucide-react";
 import { useState } from "react";
-import { image_info, ImageInfo } from "@/utils/image.ts";
-import { ImageCropCard, ImageInfoCard } from "@/components/image.tsx";
+import {
+	ImageInfoListModal,
+	ImageCropModal,
+	ImageRotateModal,
+	ImageResizeModal,
+	ImageFlipModal,
+	ImageFilterModal,
+} from "@/components/image";
 
-export const ImageMenu = ({ image }: { image: Array<File> }) => {
-	const [imageInfo, setImageInfo] = useState<ImageInfo | null>(null);
-	const [showImageInfo, setShowImageInfo] = useState(false);
-	const [showImageCrop, setShowImageCrop] = useState(false);
+type ModalType = "info" | "crop" | "rotate" | "resize" | "flip" | "grayscale" | "invert" | null;
+
+export const ImageMenu = ({ image }: { image: File[] }) => {
+	const [activeModal, setActiveModal] = useState<ModalType>(null);
+
+	const menuItems = [
+		{ type: "info" as const, label: "查看信息", icon: Info, color: "bg-pink-300/70" },
+		{ type: "crop" as const, label: "裁剪", icon: Crop, color: "bg-pink-300/80" },
+		{ type: "rotate" as const, label: "旋转", icon: RotateCw, color: "bg-pink-300/70" },
+		{ type: "resize" as const, label: "缩放", icon: Maximize2, color: "bg-pink-300/70" },
+		{ type: "flip" as const, label: "翻转", icon: FlipHorizontal, color: "bg-pink-300/70" },
+		{ type: "grayscale" as const, label: "灰度化", icon: Palette, color: "bg-pink-300/80" },
+		{ type: "invert" as const, label: "反色", icon: Contrast, color: "bg-pink-300/70" },
+	];
 
 	return (
 		<>
-			<div className="flex flex-wrap gap-3 justify-center">
-				<button
-					onClick={async () => {
-						const info = await image_info(image[0]);
-						setImageInfo(info);
-						setShowImageInfo(true);
-					}}
-					className="px-6 h-12 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl transition-colors flex items-center justify-center gap-2 font-medium"
-				>
-					<Info size={18} />
-					查看信息
-				</button>
-
-				<button
-					onClick={() => setShowImageCrop(true)}
-					className="px-6 h-12 bg-blue-500 text-white hover:bg-blue-600 rounded-xl transition-colors flex items-center justify-center gap-2 font-medium shadow-sm"
-				>
-					<Crop size={18} />
-					裁剪图片
-				</button>
+			<div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3">
+				{menuItems.map((item) => {
+					const Icon = item.icon;
+					return (
+						<Button
+							key={item.type}
+							onPress={() => setActiveModal(item.type)}
+							className="h-auto py-7 px-7 bg-white/60 dark:bg-pink-950/30 backdrop-blur-md border-2 border-pink-200/50 dark:border-pink-800/40 hover:border-pink-300/80 dark:hover:border-pink-700/60 hover:bg-white/80 dark:hover:bg-pink-950/40 hover:scale-[1.02] transition-all duration-200 shadow-sm hover:shadow-lg rounded-2xl"
+						>
+							<div className="flex flex-row items-center gap-5 w-full">
+								<div className={`p-5 rounded-xl ${item.color} shadow-md shrink-0`}>
+									<Icon size={32} className="text-white" strokeWidth={2} />
+								</div>
+								<span className="text-lg font-semibold text-pink-400/90 dark:text-pink-300/90">
+									{item.label}
+								</span>
+							</div>
+						</Button>
+					);
+				})}
 			</div>
 
-			{showImageInfo && imageInfo && (
-				<ImageInfoCard
-					imageInfo={imageInfo}
-					onClose={() => setShowImageInfo(false)}
-				/>
+			{activeModal === "info" && (
+				<ImageInfoListModal images={image} onClose={() => setActiveModal(null)} />
 			)}
-
-			{showImageCrop && (
-				<ImageCropCard
-					image_data={image[0]}
-					onClose={() => setShowImageCrop(false)}
+			{activeModal === "crop" && (
+				<ImageCropModal images={image} onClose={() => setActiveModal(null)} />
+			)}
+			{activeModal === "rotate" && (
+				<ImageRotateModal images={image} onClose={() => setActiveModal(null)} />
+			)}
+			{activeModal === "resize" && (
+				<ImageResizeModal images={image} onClose={() => setActiveModal(null)} />
+			)}
+			{activeModal === "flip" && (
+				<ImageFlipModal images={image} onClose={() => setActiveModal(null)} />
+			)}
+			{(activeModal === "grayscale" || activeModal === "invert") && (
+				<ImageFilterModal
+					images={image}
+					filterType={activeModal}
+					onClose={() => setActiveModal(null)}
 				/>
 			)}
 		</>

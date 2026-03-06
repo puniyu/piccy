@@ -1,7 +1,18 @@
 import { invoke } from "@tauri-apps/api/core";
-import { toaster } from "@/components/ui/toaster";
 
-export const download_file = async (image_data: ArrayBuffer): Promise<void> => {
+interface ToasterType {
+  create: (options: {
+    title: string;
+    description?: string;
+    type: "success" | "error" | "warning" | "info";
+    duration: number;
+  }) => void;
+}
+
+export const download_file = async (
+  image_data: ArrayBuffer,
+  toaster: ToasterType,
+): Promise<void> => {
   const uint8Array = new Uint8Array(image_data);
   try {
     const path = await invoke<string>("download_file", { data: uint8Array });

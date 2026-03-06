@@ -9,13 +9,14 @@
 		"tauri": "tauri"
 	},
 	"dependencies": {
+		"@heroui/react": "3.0.0-beta.3",
+		"@heroui/styles": "3.0.0-beta.3",
 		"@tauri-apps/api": "^2.9.0",
 		"@tauri-apps/plugin-fs": "~2.4.2",
 		"axios": "^1.12.2",
-		"@heroui/react": "3.0.0-beta.3",
-		"@heroui/styles": "3.0.0-beta.3",
 		"react": "^19.2.0",
-		"react-dom": "^19.2.0"
+		"react-dom": "^19.2.0",
+		"zustand": "^5.0.11"
 	},
 	"devDependencies": {
 		"@emotion/react": "^11.14.0",
