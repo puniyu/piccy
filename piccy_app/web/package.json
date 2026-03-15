@@ -1,6 +1,6 @@
 {
 	"name": "puniyu-web",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
@@ -9,7 +9,7 @@
 		"tauri": "tauri"
 	},
 	"dependencies": {
-		"@heroui/react": "3.0.0-beta.3",
+		"@heroui/react": "3.0.0-beta.8",
 		"@heroui/styles": "3.0.0-beta.3",
 		"@tauri-apps/api": "^2.9.0",
 		"@tauri-apps/plugin-fs": "~2.4.2",
@@ -25,7 +25,7 @@
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.2",
 		"@vitejs/plugin-react": "^5.0.4",
-		"lucide-react": "^0.575.0",
+		"lucide-react": "^0.577.0",
 		"motion": "^12.23.24",
 		"next-themes": "^0.4.6",
 		"react-image-crop": "^11.0.7",

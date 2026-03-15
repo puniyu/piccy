@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.5.1](https://github.com/puniyu/piccy/compare/app-v0.5.0...app-v0.5.1) (2026-03-06)
+
+
+### ⚡️ 性能优化
+
+* **app:** 替换Chakra UI为自定义组件并添加拖拽上传功能 ([29548e7](https://github.com/puniyu/piccy/commit/29548e741fec1375af02e8882caf560de16631d9))
+
+
+### 🔧 其他更新
+
+* **deps:** update node packages ([ca00f58](https://github.com/puniyu/piccy/commit/ca00f58f961d8b450e819484cca575e685d7e945))
+
+
+### ♻️ 代码重构
+
+* 重写app ([4912846](https://github.com/puniyu/piccy/commit/491284625e4ae615e1868bf1c3438f2dcd782b7d))
+
 ## [0.5.0](https://github.com/puniyu/piccy/compare/app-v0.4.3...app-v0.5.0) (2026-02-25)
 
 
