@@ -291,56 +291,136 @@ impl Image {
     /// # 参数
     /// - `hidden`: 需要隐藏的图片
     pub fn mirage(&self, hidden: &Self) -> Result<Self> {
-        use image::ImageFormat;
-        let wlight = 1.0f32;
-        let blight = 0.5f32;
-
-        let info1 = self.info()?;
-        let info2 = hidden.info()?;
-
-        let w = info1.width.min(info2.width);
-        let h = info1.height.min(info2.height);
-
         let cursor1 = Cursor::new(&self.0);
         let img1 = ImageReader::new(cursor1).with_guessed_format()?.decode()?;
 
         let cursor2 = Cursor::new(&hidden.0);
         let img2 = ImageReader::new(cursor2).with_guessed_format()?.decode()?;
 
-        let img1 = img1
-            .resize_exact(w, h, image::imageops::CatmullRom)
-            .to_rgba8();
-        let img2 = img2
-            .resize_exact(w, h, image::imageops::CatmullRom)
-            .to_rgba8();
+        let w = img1.width().min(img2.width());
+        let h = img1.height().min(img2.height());
 
-        let calculate_luminance = |pixel: &image::Rgba<u8>, light_factor: f32| -> f32 {
-            (0.299 * pixel.0[0] as f32 + 0.587 * pixel.0[1] as f32 + 0.114 * pixel.0[2] as f32)
-                * light_factor
+        let img1_rgba = img1.resize_exact(w, h, FilterType::Lanczos3).to_rgba8();
+        let img2_rgba = img2.resize_exact(w, h, FilterType::Lanczos3).to_rgba8();
+
+
+        let calc_avg_luminance = |img: &RgbaImage| -> f32 {
+            let sum: f32 = img.pixels().take(1000).map(|p| {
+                0.299 * p.0[0] as f32 + 0.587 * p.0[1] as f32 + 0.114 * p.0[2] as f32
+            }).sum();
+            sum / 1000.0
         };
 
-        let mut out_img = RgbaImage::new(w, h);
-        out_img.enumerate_pixels_mut().for_each(|(x, y, pixel)| {
-            let wpixel = img1.get_pixel(x, y);
-            let bpixel = img2.get_pixel(x, y);
+        let white_avg = calc_avg_luminance(&img1_rgba);
+        let black_avg = calc_avg_luminance(&img2_rgba);
 
-            let wc = calculate_luminance(wpixel, wlight);
-            let bc = calculate_luminance(bpixel, blight);
+        let white_light = if white_avg < 100.0 {
+            1.2
+        } else if white_avg > 180.0 {
+            0.9 
+        } else {
+            1.0
+        };
 
-            let a = (255.0 - wc + bc).clamp(0.0, 255.0);
-            let r = if a > 0.0 {
-                (bc / a * 255.0).min(255.0)
-            } else {
-                0.0
+        let black_light = if black_avg < 80.0 {
+            0.4
+        } else if black_avg > 150.0 {
+            0.6 
+        } else {
+            0.5
+        };
+
+        self.mirage_internal(img1_rgba, img2_rgba, white_light, black_light)
+    }
+
+    /// 幻影坦克内部实现
+    fn mirage_internal(
+        &self,
+        img1: RgbaImage,
+        img2: RgbaImage,
+        white_light: f32,
+        black_light: f32,
+    ) -> Result<Self> {
+        use image::ImageFormat;
+
+        let w = img1.width();
+        let h = img1.height();
+
+        let is_color = {
+            let check_color = |img: &RgbaImage| -> bool {
+                img.pixels().take(100).any(|p| {
+                    let [r, g, b, _] = p.0;
+                    r != g || g != b
+                })
             };
+            check_color(&img1) || check_color(&img2)
+        };
 
-            *pixel = image::Rgba([
-                r.round() as u8,
-                r.round() as u8,
-                r.round() as u8,
-                a.round() as u8,
-            ]);
-        });
+        const LUM_R: f32 = 0.299;
+        const LUM_G: f32 = 0.587;
+        const LUM_B: f32 = 0.114;
+
+        use rayon::prelude::*;
+        use std::sync::Arc;
+
+        let img1 = Arc::new(img1);
+        let img2 = Arc::new(img2);
+
+        let pixels: Vec<_> = (0..h)
+            .into_par_iter()
+            .flat_map(|y| {
+                let img1 = Arc::clone(&img1);
+                let img2 = Arc::clone(&img2);
+                (0..w).into_par_iter().map(move |x| {
+                    let wpixel = img1.get_pixel(x, y);
+                    let bpixel = img2.get_pixel(x, y);
+
+                    if is_color {
+                        let mut result = [0u8; 4];
+                        for (i, r) in result.iter_mut().enumerate().take(3) {
+                            let wc = wpixel.0[i] as f32 * white_light;
+                            let bc = bpixel.0[i] as f32 * black_light;
+                            let a = (255.0 - wc + bc).clamp(1.0, 255.0);
+                            *r = ((bc / a * 255.0).min(255.0).round()) as u8;
+                        }
+                        let wc_avg = (LUM_R * wpixel.0[0] as f32
+                            + LUM_G * wpixel.0[1] as f32
+                            + LUM_B * wpixel.0[2] as f32)
+                            * white_light;
+                        let bc_avg = (LUM_R * bpixel.0[0] as f32
+                            + LUM_G * bpixel.0[1] as f32
+                            + LUM_B * bpixel.0[2] as f32)
+                            * black_light;
+                        result[3] = ((255.0 - wc_avg + bc_avg).clamp(0.0, 255.0).round()) as u8;
+                        (x, y, image::Rgba(result))
+                    } else {
+                        let wc = (LUM_R * wpixel.0[0] as f32
+                            + LUM_G * wpixel.0[1] as f32
+                            + LUM_B * wpixel.0[2] as f32)
+                            * white_light;
+                        let bc = (LUM_R * bpixel.0[0] as f32
+                            + LUM_G * bpixel.0[1] as f32
+                            + LUM_B * bpixel.0[2] as f32)
+                            * black_light;
+
+                        let a = (255.0 - wc + bc).clamp(0.0, 255.0);
+                        let r = if a > 0.0 {
+                            (bc / a * 255.0).min(255.0)
+                        } else {
+                            0.0
+                        };
+
+                        let r_u8 = r.round() as u8;
+                        (x, y, image::Rgba([r_u8, r_u8, r_u8, a.round() as u8]))
+                    }
+                })
+            })
+            .collect();
+
+        let mut out_img = RgbaImage::new(w, h);
+        for (x, y, pixel) in pixels {
+            out_img.put_pixel(x, y, pixel);
+        }
 
         let mut buffer = Vec::new();
         out_img.write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)?;
