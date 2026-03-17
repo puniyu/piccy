@@ -38,7 +38,7 @@ jobs:
           tools: tauri-cli
 
       - name: 配置 pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
         with:
           version: 10.25.0
 
@@ -107,7 +107,7 @@ jobs:
           packages: gcc-aarch64-linux-gnu libwebkit2gtk-4.1-dev:arm64
 
       - name: 配置 pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
         with:
           version: 10.25.0
 
@@ -174,7 +174,7 @@ jobs:
           ndk-version: r27d
 
       - name: 配置 pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
         with:
           version: 10.25.0
 
