@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.2](https://github.com/puniyu/piccy/compare/app-v0.5.1...app-v0.5.2) (2026-03-18)
+
+
+### 🔧 其他更新
+
+* **deps:** update node packages ([48b662f](https://github.com/puniyu/piccy/commit/48b662f9ea2a35b3fbd2ccee96e2ee8348655658))
+* **deps:** update node packages ([2aa14b6](https://github.com/puniyu/piccy/commit/2aa14b6e8e90024ab3ddec024e80e8b52c14512c))
+
 ## [0.5.1](https://github.com/puniyu/piccy/compare/app-v0.5.0...app-v0.5.1) (2026-03-06)
 
 

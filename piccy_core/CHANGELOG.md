@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/puniyu/piccy/compare/core-v0.5.1...core-v0.5.2) (2026-03-18)
+
+
+### ⚡️ 性能优化
+
+* 优化幻影坦克算法实现 ([a3c7ec6](https://github.com/puniyu/piccy/commit/a3c7ec602d6c1f6ff72ce7b39823882293e79afb))
+
 ## [0.5.1](https://github.com/puniyu/piccy/compare/core-v0.5.0...core-v0.5.1) (2026-03-06)
 
 
