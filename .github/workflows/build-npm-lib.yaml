@@ -2,9 +2,11 @@ name: Build NPM Lib
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 env:
   APP_NAME: piccy
+  APP_PATH: piccy_node
 
 jobs:
   build_windows:
@@ -20,30 +22,19 @@ jobs:
       - name: 检出仓库
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
-      - name: 设置 rust
-        uses: puniyu/setup-rust@main
+      - name: 构建
+        id: build
+        uses: puniyu/napi-build-action@main
         with:
           target: ${{ matrix.platform.target }}
-          save-cache: true
-          prefix-key: ${{ env.APP_NAME }}
+          cwdDir: ${{ env.APP_PATH }}
 
-      - name: 配置 pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
-        with:
-          version: 10.25.0
-          run_install: true
-
-      - name: 构建
-        run: |
-          pnpm build --target ${{ matrix.platform.target }}
-        working-directory: piccy_node
 
       - name: 上传构建产物
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: "${{ env.APP_NAME }}-node-${{ matrix.platform.label }}"
-          path: |
-            piccy_node/dist/${{ env.APP_NAME }}*.node
+          path: ${{ steps.build.outputs.output-path }}
 
   build_macos:
     runs-on: ${{ matrix.platform.runner }}
@@ -61,30 +52,19 @@ jobs:
       - name: 检出仓库
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
-      - name: 设置 rust
-        uses: puniyu/setup-rust@main
+      - name: 构建
+        id: build
+        uses: puniyu/napi-build-action@main
         with:
           target: ${{ matrix.platform.target }}
-          save-cache: true
-          prefix-key: ${{ env.APP_NAME }}
+          cwdDir: ${{ env.APP_PATH }}
 
-      - name: 配置 pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
-        with:
-          version: 10.25.0
-          run_install: true
-
-      - name: 构建
-        run: |
-          pnpm build --target ${{ matrix.platform.target }}
-        working-directory: piccy_node
 
       - name: 上传构建产物
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: "${{ env.APP_NAME }}-node-${{ matrix.platform.label }}"
-          path: |
-            piccy_node/dist/${{ env.APP_NAME }}*.node
+          path: ${{ steps.build.outputs.output-path }}
 
   build_linux:
     runs-on: ${{ matrix.platform.runner }}
@@ -105,30 +85,19 @@ jobs:
       - name: 检出仓库
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
-      - name: 设置 rust
-        uses: puniyu/setup-rust@main
+      - name: 构建
+        id: build
+        uses: puniyu/napi-build-action@main
         with:
           target: ${{ matrix.platform.target }}
-          save-cache: true
-          prefix-key: ${{ env.APP_NAME }}
+          cwdDir: ${{ env.APP_PATH }}
 
-      - name: 配置 pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
-        with:
-          version: 10.25.0
-          run_install: true
-
-      - name: 构建
-        run: |
-          pnpm build --target ${{ matrix.platform.target }}
-        working-directory: piccy_node
 
       - name: 上传构建产物
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: "${{ env.APP_NAME }}-node-${{ matrix.platform.label }}"
-          path: |
-            piccy_node/dist/${{ env.APP_NAME }}*.node
+          path: ${{ steps.build.outputs.output-path }}
   
 
   build_wasm:
@@ -145,30 +114,19 @@ jobs:
       - name: 检出仓库
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
-      - name: 设置 rust
-        uses: puniyu/setup-rust@main
+      - name: 构建
+        id: build
+        uses: puniyu/napi-build-action@main
         with:
           target: ${{ matrix.platform.target }}
-          save-cache: true
-          prefix-key: ${{ env.APP_NAME }}
+          cwdDir: ${{ env.APP_PATH }}
 
-      - name: 配置 pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
-        with:
-          version: 10.25.0
-          run_install: true
-
-      - name: 构建
-        run: |
-          pnpm build --target ${{ matrix.platform.target }}
-        working-directory: piccy_node
 
       - name: 上传构建产物
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: "${{ env.APP_NAME }}-node-${{ matrix.platform.label }}"
-          path: |
-            piccy_node/dist/piccy.wasm32-wasi.wasm
+          path: ${{ steps.build.outputs.output-path }}
 
 
       - name: 上传npm包
@@ -176,16 +134,16 @@ jobs:
         with:
           name: "npm-package"
           path: |
-            piccy_node/dist/index.js
-            piccy_node/dist/index.d.ts
-            piccy_node/package.json      
+            ${{ env.APP_PATH }}/dist/index.js
+            ${{ env.APP_PATH }}/dist/index.d.ts
+            ${{ env.APP_PATH }}/package.json      
 
-      - name: 上传npm包
+      - name: 上传wasm包
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: "npm-wasm"
           path: |
-            piccy_node/dist/piccy.wasi.cjs
-            piccy_node/dist/piccy.wasi-browser.js
-            piccy_node/dist/wasi-worker.mjs
-            piccy_node/dist/wasi-worker-browser.mjs
+            ${{ env.APP_PATH }}/dist/piccy.wasi.cjs
+            ${{ env.APP_PATH }}/dist/piccy.wasi-browser.js
+            ${{ env.APP_PATH }}/dist/wasi-worker.mjs
+            ${{ env.APP_PATH }}/dist/wasi-worker-browser.mjs
