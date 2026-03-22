@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/puniyu/piccy/compare/core-v0.5.2...core-v0.5.3) (2026-03-22)
+
+
+### 🔧 其他更新
+
+* **core:** Synchronize piccy versions
+
 ## [0.5.2](https://github.com/puniyu/piccy/compare/core-v0.5.1...core-v0.5.2) (2026-03-18)
 
 
