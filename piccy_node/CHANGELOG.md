@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.3](https://github.com/puniyu/piccy/compare/node-v0.5.2...node-v0.5.3) (2026-03-22)
+
+
+### 🔧 其他更新
+
+* **node:** Synchronize piccy versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * piccy_core bumped from 0.5.2 to 0.5.3
+
 ## [0.5.2](https://github.com/puniyu/piccy/compare/node-v0.5.1...node-v0.5.2) (2026-03-18)
 
 
