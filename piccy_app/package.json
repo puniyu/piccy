@@ -12,7 +12,7 @@
         "sass": "^1.93.2",
         "tailwindcss": "^4.1.14",
         "tsc": "^2.0.4",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.0",
         "vite": "npm:rolldown-vite@latest",
         "vite-plugin-compression": "^0.5.1",
         "vite-tsconfig-paths": "^6.0.0"
