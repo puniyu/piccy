@@ -38,7 +38,7 @@ jobs:
           tools: tauri-cli
 
       - name: Setup Nodejs
-        uses: puniyu/setup-node@main
+        uses: puniyu/setup-node@c1faa989016842e46ed5c17e667d00f4e00d4225 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -97,7 +97,7 @@ jobs:
           tools: tauri-cli
 
       - name: Setup Nodejs
-        uses: puniyu/setup-node@main
+        uses: puniyu/setup-node@c1faa989016842e46ed5c17e667d00f4e00d4225 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -105,7 +105,7 @@ jobs:
 
 
       - name: 配置 webkit
-        uses: awalsh128/cache-apt-pkgs-action@latest
+        uses: awalsh128/cache-apt-pkgs-action@2c09a5e66da6c8016428a2172bd76e5e4f14bb17 # latest
         with:
           packages: libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
@@ -162,7 +162,7 @@ jobs:
           tools: tauri-cli
 
       - name: Setup Nodejs
-        uses: puniyu/setup-node@main
+        uses: puniyu/setup-node@c1faa989016842e46ed5c17e667d00f4e00d4225 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
