@@ -1,5 +1,5 @@
 use crate::error::Error;
-use piccy_core::{FlipMode, Image, ImageInfo, MergeMode};
+use piccy_core::{FlipMode, Image, ImageInfo};
 use tauri::ipc::Response;
 use tauri::{AppHandle, Manager, Runtime, command};
 

@@ -60,11 +60,9 @@ impl Image {
                     .map(|f| (f.buffer().width(), f.buffer().height()))
                     .unwrap_or((0, 0));
                 Ok(ImageInfo {
-                    width,
-                    height,
-                    is_multi_frame: animation_info.frame_count > 1,
-                    frame_count: Some(animation_info.frame_count),
-                    average_duration: animation_info.frame_delay,
+                    size: self.0.len(),
+                    dimensions: crate::Dimensions { width, height },
+                    animation: Some(animation_info),
                 })
             }
             Some(ImageFormat::WebP) => {
@@ -75,21 +73,20 @@ impl Image {
                     .map(|f| (f.buffer().width(), f.buffer().height()))
                     .unwrap_or((0, 0));
                 Ok(ImageInfo {
-                    width,
-                    height,
-                    is_multi_frame: animation_info.frame_count > 1,
-                    frame_count: Some(animation_info.frame_count),
-                    average_duration: animation_info.frame_delay,
+                    size: self.0.len(),
+                    dimensions: crate::Dimensions { width, height },
+                    animation: Some(animation_info),
                 })
             }
             _ => {
                 let image = reader.decode()?;
                 Ok(ImageInfo {
-                    width: image.width(),
-                    height: image.height(),
-                    is_multi_frame: false,
-                    frame_count: Some(1),
-                    average_duration: None,
+                    size: self.0.len(),
+                    dimensions: crate::Dimensions {
+                        width: image.width(),
+                        height: image.height(),
+                    },
+                    animation: None,
                 })
             }
         }
@@ -712,8 +709,8 @@ impl Image {
 
         let first_image = all_images.first().unwrap();
         let info = first_image.info()?;
-        let width = info.width;
-        let height = info.height;
+        let width = info.dimensions.width;
+        let height = info.dimensions.height;
         let frame_duration = duration.unwrap_or(Duration::from_millis(20));
 
         let frames: Result<Vec<Frame>> = all_images

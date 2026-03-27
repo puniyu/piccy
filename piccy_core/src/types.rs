@@ -1,26 +1,36 @@
 use image::Frame;
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Clone)]
+
+#[derive(Debug, Copy, Clone, Deserialize, Serialize, PartialEq)]
 pub struct AnimationInfo {
-    /// 帧数
+    /// 动画帧数
     pub frame_count: u32,
-    /// 帧间隔时间（毫秒）
-    pub frame_delay: Option<f32>,
+    /// 平均帧延迟，单位为毫秒
+    pub frame_delay: f32,
+}
+
+impl Default for AnimationInfo {
+    fn default() -> Self {
+        Self {
+            frame_count: 0,
+            frame_delay: 0.0,
+        }
+    }
 }
 
 impl From<&[Frame]> for AnimationInfo {
     fn from(frames: &[Frame]) -> Self {
         let frame_count = frames.len() as u32;
         let frame_delay = if frame_count > 0 {
-            let avg_delay: u64 = frames
+            frames
                 .iter()
-                .map(|frame| frame.delay().numer_denom_ms().0 as u64)
-                .sum::<u64>()
-                / frame_count.max(1) as u64;
-            Some(avg_delay as f32)
+                .map(|frame| frame.delay().numer_denom_ms().0 as f32)
+                .sum::<f32>()
+                / frame_count as f32
         } else {
-            None
+            0.0
         };
+
         Self {
             frame_count,
             frame_delay,
@@ -40,21 +50,22 @@ impl From<&Vec<Frame>> for AnimationInfo {
     }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Copy, Clone, Deserialize, Serialize, PartialEq)]
 pub struct ImageInfo {
-    /// 图像宽度
-    pub width: u32,
-    /// 图像高度
-    pub height: u32,
-    /// 是否为动图
-    pub is_multi_frame: bool,
-    /// 动图帧数
-    pub frame_count: Option<u32>,
-    /// 动图平均帧间隔
-    pub average_duration: Option<f32>,
+    /// 图片大小，单位为字节
+    pub size: usize,
+    pub dimensions: Dimensions,
+    pub animation: Option<AnimationInfo>,
 }
 
-/// 图像翻转模式
+#[derive(Debug, Copy, Clone, Deserialize, Serialize, PartialEq)]
+pub struct Dimensions {
+    /// 图片宽度，单位为像素
+    pub width: u32,
+    /// 图片高度，单位为像素
+    pub height: u32,
+}
+/// 图片翻转模式
 #[derive(Debug, Clone, Default)]
 pub enum FlipMode {
     /// 水平翻转
@@ -64,7 +75,7 @@ pub enum FlipMode {
     Vertical,
 }
 
-/// 图像拼接模式
+/// 图片拼接模式
 #[derive(Debug, Clone, Default)]
 pub enum MergeMode {
     /// 水平拼接

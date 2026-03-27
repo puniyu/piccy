@@ -28,6 +28,7 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
+          esm: true
 
 
       - name: 上传构建产物
@@ -58,6 +59,7 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
+          esm: true
 
 
       - name: 上传构建产物
@@ -91,6 +93,7 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
+          esm: true
 
 
       - name: 上传构建产物
@@ -120,6 +123,7 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
+          esm: true
 
 
       - name: 上传构建产物

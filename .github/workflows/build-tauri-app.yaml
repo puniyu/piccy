@@ -33,14 +33,16 @@ jobs:
         uses: puniyu/setup-rust@main
         with:
           target: ${{ matrix.platform.target }}
-          save-cache: true
+          cache: true
           prefix-key: ${{ env.APP_NAME }}
           tools: tauri-cli
 
-      - name: 配置 pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+      - name: Setup Nodejs
+        uses: puniyu/setup-node@main
         with:
-          version: 10.25.0
+          node-version: lts/*
+          pnpm-version: 10.25.0
+          cache: true
 
       - name: 构建
         run: |
@@ -94,8 +96,15 @@ jobs:
           prefix-key: ${{ env.APP_NAME }}
           tools: tauri-cli
 
-      - name: 配置 webkit
+      - name: Setup Nodejs
+        uses: puniyu/setup-node@main
+        with:
+          node-version: lts/*
+          pnpm-version: 10.25.0
+          cache: true
 
+
+      - name: 配置 webkit
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
@@ -105,11 +114,6 @@ jobs:
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: gcc-aarch64-linux-gnu libwebkit2gtk-4.1-dev:arm64
-
-      - name: 配置 pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
-        with:
-          version: 10.25.0
 
       - name: 构建
         run: |
@@ -150,17 +154,19 @@ jobs:
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: 设置 rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets:
-
-      - name: 设置 rust
         uses: puniyu/setup-rust@main
         with:
           target: ${{ matrix.platform.target }}
           save-cache: true
           prefix-key: ${{ env.APP_NAME }}
           tools: tauri-cli
+
+      - name: Setup Nodejs
+        uses: puniyu/setup-node@main
+        with:
+          node-version: lts/*
+          pnpm-version: 10.25.0
+          cache: true
 
       - name: 配置 webkit
         uses: awalsh128/cache-apt-pkgs-action@latest
@@ -172,11 +178,6 @@ jobs:
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: r27d
-
-      - name: 配置 pnpm
-        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
-        with:
-          version: 10.25.0
 
       - name: 设置 Android 签名
         run: |

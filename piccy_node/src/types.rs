@@ -4,9 +4,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[napi(object)]
 pub struct ImageInfo {
-    /// 图像宽度
+    /// 图片大小，单位为字节
+    pub size: u32,
+    /// 图片宽度
     pub width: u32,
-    /// 图像高度
+    /// 图片高度
     pub height: u32,
     /// 是否为动图
     pub is_multi_frame: bool,
@@ -18,12 +20,14 @@ pub struct ImageInfo {
 
 impl From<piccy_core::ImageInfo> for ImageInfo {
     fn from(result: piccy_core::ImageInfo) -> Self {
+        let animation = result.animation;
         Self {
-            width: result.width,
-            height: result.height,
-            is_multi_frame: result.is_multi_frame,
-            frame_count: result.frame_count,
-            average_duration: result.average_duration.map(Into::into),
+            size: result.size as u32,
+            width: result.dimensions.width,
+            height: result.dimensions.height,
+            is_multi_frame: animation.is_some(),
+            frame_count: animation.map(|info| info.frame_count),
+            average_duration: animation.map(|info| info.frame_delay as f64),
         }
     }
 }
@@ -46,7 +50,7 @@ impl From<FlipMode> for piccy_core::FlipMode {
     }
 }
 
-/// 图像拼接模式
+/// 图片拼接模式
 #[derive(Debug, Clone)]
 #[napi]
 pub enum MergeMode {
