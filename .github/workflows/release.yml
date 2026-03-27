@@ -38,7 +38,7 @@ jobs:
 
       - name: 运行 release-please-action
         id: release-please
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@16a9c90856f42705d54a6fda1823352bdc62cf38 # v4.4.0
         with:
           token: ${{ steps.app-token.outputs.token }}
           config-file: .release-please-config.json
@@ -50,10 +50,10 @@ jobs:
     if: needs.release.outputs.core
     steps:
       - name: 检出仓库
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@main
+        uses: puniyu/setup-rust@36710db2069c5dbcd0bc48cf725ad62ece8bff77 # main
         with:
           save-cache: true
           prefix-key: ${{ env.APP_NAME }}
@@ -84,14 +84,14 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: 下载构建产物
-        uses: dawidd6/action-download-artifact@v11
+        uses: dawidd6/action-download-artifact@ac66b43f0e6a346234dd65d4d0c8fbb31cb316e5 # v11
         with:
           name: ^piccy-app.*
           name_is_regexp: true
           skip_unpack: true
 
       - name: 上传Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
         with:
           token: ${{ steps.app-token.outputs.token }}
           files: |
@@ -116,19 +116,19 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: 下载npm包
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: "npm-package"
           path: piccy-node
 
       - name: 下载wasm包
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: "npm-wasm"
           path: piccy-node
 
       - name: 下载构建产物
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: piccy-node*
           path: piccy-node/artifacts
@@ -151,7 +151,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 上传Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
         with:
           token: ${{ steps.app-token.outputs.token }}
           files: |
