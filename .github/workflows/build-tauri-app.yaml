@@ -27,10 +27,10 @@ jobs:
 
     steps:
       - name: 检出仓库
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@main
+        uses: puniyu/setup-rust@36710db2069c5dbcd0bc48cf725ad62ece8bff77 # main
         with:
           target: ${{ matrix.platform.target }}
           cache: true
@@ -86,10 +86,10 @@ jobs:
 
     steps:
       - name: 检出仓库
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@main
+        uses: puniyu/setup-rust@36710db2069c5dbcd0bc48cf725ad62ece8bff77 # main
         with:
           target: aarch64-linux-android x86_64-linux-android armv7-linux-androideabi i686-linux-android
           save-cache: true
@@ -111,7 +111,7 @@ jobs:
 
       - name: 配置arm64
         if: ${{ matrix.platform.label == 'linux-aarch64' }}
-        uses: awalsh128/cache-apt-pkgs-action@latest
+        uses: awalsh128/cache-apt-pkgs-action@2c09a5e66da6c8016428a2172bd76e5e4f14bb17 # latest
         with:
           packages: gcc-aarch64-linux-gnu libwebkit2gtk-4.1-dev:arm64
 
@@ -151,10 +151,10 @@ jobs:
 
     steps:
       - name: 检出仓库
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@main
+        uses: puniyu/setup-rust@36710db2069c5dbcd0bc48cf725ad62ece8bff77 # main
         with:
           target: ${{ matrix.platform.target }}
           save-cache: true
@@ -169,13 +169,13 @@ jobs:
           cache: true
 
       - name: 配置 webkit
-        uses: awalsh128/cache-apt-pkgs-action@latest
+        uses: awalsh128/cache-apt-pkgs-action@2c09a5e66da6c8016428a2172bd76e5e4f14bb17 # latest
         with:
           packages: libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: 配置ndk
         id: setup-ndk
-        uses: nttld/setup-ndk@v1
+        uses: nttld/setup-ndk@ed92fe6cadad69be94a966a7ee3271275e62f779 # v1.6.0
         with:
           ndk-version: r27d
 
