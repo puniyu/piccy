@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/puniyu/piccy/compare/core-v0.5.2...core-v0.5.3) (2026-03-28)
+
+
+### ♻️ 代码重构
+
+* **piccy_core:** 重构错误处理和图像信息结构 ([5ddfbc5](https://github.com/puniyu/piccy/commit/5ddfbc5264285c815ce9c83f98420a1d4a46defa))
+
 ## [0.5.2](https://github.com/puniyu/piccy/compare/core-v0.5.1...core-v0.5.2) (2026-03-18)
 
 
