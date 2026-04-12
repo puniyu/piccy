@@ -3251,7 +3251,7 @@ dependencies = [
 
 [[package]]
 name = "piccy_app"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "anyhow",
  "piccy_core",
@@ -3265,7 +3265,7 @@ dependencies = [
 
 [[package]]
 name = "piccy_core"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "base64 0.22.1",
  "bytes",
@@ -3278,7 +3278,7 @@ dependencies = [
 
 [[package]]
 name = "piccy_node"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "image",
  "napi",
