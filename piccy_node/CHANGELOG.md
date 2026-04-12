@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.3](https://github.com/puniyu/piccy/compare/node-v0.5.2...node-v0.5.3) (2026-04-12)
+
+
+### ♻️ 代码重构
+
+* **piccy_core:** 重构错误处理和图像信息结构 ([5ddfbc5](https://github.com/puniyu/piccy/commit/5ddfbc5264285c815ce9c83f98420a1d4a46defa))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * piccy_core bumped from 0.5.2 to 0.5.3
+
 ## [0.5.2](https://github.com/puniyu/piccy/compare/node-v0.5.1...node-v0.5.2) (2026-03-18)
 
 
