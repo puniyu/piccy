@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.3](https://github.com/puniyu/piccy/compare/app-v0.5.2...app-v0.5.3) (2026-04-20)
+
+
+### 🔧 其他更新
+
+* **deps:** update node packages ([5559a72](https://github.com/puniyu/piccy/commit/5559a7267dd98554f8e66022664d49ea039d98ea))
+* **deps:** update node packages ([da8c639](https://github.com/puniyu/piccy/commit/da8c639aa4f2b4a61450d6d6daf85707ff8cf37b))
+
+
+### ♻️ 代码重构
+
+* **piccy_core:** 重构错误处理和图像信息结构 ([5ddfbc5](https://github.com/puniyu/piccy/commit/5ddfbc5264285c815ce9c83f98420a1d4a46defa))
+
 ## [0.5.2](https://github.com/puniyu/piccy/compare/app-v0.5.1...app-v0.5.2) (2026-03-18)
 
 
