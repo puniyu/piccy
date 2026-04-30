@@ -134,7 +134,7 @@ jobs:
           path: piccy-node/artifacts
 
       - name: Setup Nodejs
-        uses: puniyu/setup-node@5a46c21db9c671554d26e6ed3369c15b4b4477c3 # main
+        uses: puniyu/setup-node@4c8ada0111c34cde90adac0212040ac4002881f1 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
