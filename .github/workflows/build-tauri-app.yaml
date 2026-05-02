@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@a6d1a3adea77d13cf52ef1c0d9c02dc11f620e5a # main
+        uses: puniyu/setup-rust@5538133d5d4c4f62391aa26fc8934b441fa1d58e # main
         with:
           target: ${{ matrix.platform.target }}
           cache: true
@@ -38,7 +38,7 @@ jobs:
           tools: tauri-cli
 
       - name: Setup Nodejs
-        uses: puniyu/setup-node@4c8ada0111c34cde90adac0212040ac4002881f1 # main
+        uses: puniyu/setup-node@ea802f7cacf0737c5d35033c30955fa31cfbb552 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -89,7 +89,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@a6d1a3adea77d13cf52ef1c0d9c02dc11f620e5a # main
+        uses: puniyu/setup-rust@5538133d5d4c4f62391aa26fc8934b441fa1d58e # main
         with:
           target: aarch64-linux-android x86_64-linux-android armv7-linux-androideabi i686-linux-android
           save-cache: true
@@ -97,7 +97,7 @@ jobs:
           tools: tauri-cli
 
       - name: Setup Nodejs
-        uses: puniyu/setup-node@4c8ada0111c34cde90adac0212040ac4002881f1 # main
+        uses: puniyu/setup-node@ea802f7cacf0737c5d35033c30955fa31cfbb552 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -154,7 +154,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@a6d1a3adea77d13cf52ef1c0d9c02dc11f620e5a # main
+        uses: puniyu/setup-rust@5538133d5d4c4f62391aa26fc8934b441fa1d58e # main
         with:
           target: ${{ matrix.platform.target }}
           save-cache: true
@@ -162,7 +162,7 @@ jobs:
           tools: tauri-cli
 
       - name: Setup Nodejs
-        uses: puniyu/setup-node@4c8ada0111c34cde90adac0212040ac4002881f1 # main
+        uses: puniyu/setup-node@ea802f7cacf0737c5d35033c30955fa31cfbb552 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
