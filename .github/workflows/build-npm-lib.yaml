@@ -20,11 +20,11 @@ jobs:
 
     steps:
       - name: 检出仓库
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: 构建
         id: build
-        uses: puniyu/napi-build-action@a69e0cadda8c87ccfc07e25d40f066e20d383ee1 # main
+        uses: puniyu/napi-build-action@b7c7d3a2b9ad48f8bb918f24c10b03de1a6c626b # main
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
@@ -51,11 +51,11 @@ jobs:
 
     steps:
       - name: 检出仓库
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: 构建
         id: build
-        uses: puniyu/napi-build-action@a69e0cadda8c87ccfc07e25d40f066e20d383ee1 # main
+        uses: puniyu/napi-build-action@b7c7d3a2b9ad48f8bb918f24c10b03de1a6c626b # main
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
@@ -85,11 +85,11 @@ jobs:
 
     steps:
       - name: 检出仓库
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: 构建
         id: build
-        uses: puniyu/napi-build-action@a69e0cadda8c87ccfc07e25d40f066e20d383ee1 # main
+        uses: puniyu/napi-build-action@b7c7d3a2b9ad48f8bb918f24c10b03de1a6c626b # main
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
@@ -115,11 +115,11 @@ jobs:
 
     steps:
       - name: 检出仓库
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: 构建
         id: build
-        uses: puniyu/napi-build-action@a69e0cadda8c87ccfc07e25d40f066e20d383ee1 # main
+        uses: puniyu/napi-build-action@b7c7d3a2b9ad48f8bb918f24c10b03de1a6c626b # main
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
