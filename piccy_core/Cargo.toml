@@ -20,5 +20,5 @@ serde.workspace = true
 thiserror.workspace = true
 
 
-imageproc = { version = "0.26.0", features = ["rayon"] }
+imageproc = { version = "0.27.0", features = ["rayon"] }
 
