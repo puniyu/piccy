@@ -85,9 +85,10 @@ pub enum MergeMode {
     Vertical,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ImageFormat {
     Png,
     Jpeg,
     WebP,
+    Gif,
 }

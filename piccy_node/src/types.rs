@@ -69,12 +69,13 @@ impl From<MergeMode> for piccy_core::MergeMode {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 #[napi]
 pub enum ImageFormat {
     Png,
     Jpeg,
     WebP,
+    Gif,
 }
 
 impl From<ImageFormat> for piccy_core::ImageFormat {
@@ -83,6 +84,7 @@ impl From<ImageFormat> for piccy_core::ImageFormat {
             ImageFormat::Png => piccy_core::ImageFormat::Png,
             ImageFormat::Jpeg => piccy_core::ImageFormat::Jpeg,
             ImageFormat::WebP => piccy_core::ImageFormat::WebP,
+            ImageFormat::Gif => piccy_core::ImageFormat::Gif,
         }
     }
 }

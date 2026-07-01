@@ -250,10 +250,10 @@ impl Image {
     /// # 参数
     /// - `duration`: 帧间隔时间（秒）
     #[napi]
-    pub fn change_duration(&self, duration: u32) -> Result<Image> {
+    pub fn change_duration(&self, duration: f64) -> Result<Image> {
         let inner = self
             .inner
-            .change_duration(Duration::from_secs(duration as u64))
+            .change_duration(Duration::from_secs_f64(duration))
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(Self { inner })
     }

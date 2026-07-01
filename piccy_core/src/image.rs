@@ -94,27 +94,52 @@ impl Image {
 
     /// 编码为字节数据
     pub fn to_bytes(&self, format: ImageFormat) -> Result<Bytes> {
+        use image::ImageFormat as ImgFmt;
+
         let cursor = Cursor::new(&self.0);
         let reader = ImageReader::new(cursor).with_guessed_format()?;
-        let image = reader.decode()?;
+        let input_format = reader.format();
+
+        let gif_out = |frames: Vec<image::Frame>| -> Result<Bytes> { encode_gif(frames) };
+
+        let image = if matches!(input_format, Some(ImgFmt::Gif) | Some(ImgFmt::WebP)) {
+            if format != ImageFormat::Gif {
+                return Err(Error::Other(
+                    "multi-frame input cannot be encoded as single-frame format; use Gif".to_string(),
+                ));
+            }
+            let frames: Vec<image::Frame> = match input_format {
+                Some(ImgFmt::Gif) => {
+                    GifDecoder::new(Cursor::new(&self.0))?.into_frames().collect_frames()?
+                }
+                Some(ImgFmt::WebP) => {
+                    WebPDecoder::new(Cursor::new(&self.0))?.into_frames().collect_frames()?
+                }
+                _ => unreachable!(),
+            };
+            return gif_out(frames);
+        } else {
+            reader.decode()?
+        };
 
         let mut buffer = Vec::new();
         let mut cursor = Cursor::new(&mut buffer);
 
         match format {
+            ImageFormat::Gif => {
+                let encoder = image::codecs::gif::GifEncoder::new(&mut cursor);
+                image.to_rgba8().write_with_encoder(encoder)?;
+            }
             ImageFormat::Png => {
-                use image::codecs::png::PngEncoder;
-                let encoder = PngEncoder::new(&mut cursor);
+                let encoder = image::codecs::png::PngEncoder::new(&mut cursor);
                 image.write_with_encoder(encoder)?;
             }
             ImageFormat::Jpeg => {
-                use image::codecs::jpeg::JpegEncoder;
-                let encoder = JpegEncoder::new(&mut cursor);
+                let encoder = image::codecs::jpeg::JpegEncoder::new(&mut cursor);
                 image.write_with_encoder(encoder)?;
             }
             ImageFormat::WebP => {
-                use image::codecs::webp::WebPEncoder;
-                let encoder = WebPEncoder::new_lossless(&mut cursor);
+                let encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut cursor);
                 image.write_with_encoder(encoder)?;
             }
         }
