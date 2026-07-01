@@ -1,5 +1,0 @@
-set windows-shell := ["powershell.exe", "-c"]
-set shell := ["bash", "-cu"]
-
-dev:
-  cargo tauri dev

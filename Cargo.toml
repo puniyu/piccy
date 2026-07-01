@@ -1,6 +1,5 @@
 [workspace]
 members = [
-    "piccy_app",
     "piccy_core",
     "piccy_node"
 ]

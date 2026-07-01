@@ -12,7 +12,6 @@
       "groupName": "piccy",
       "components": [
         "core",
-        "app",
         "node"
       ]
     }
@@ -95,17 +94,6 @@
         {
           "type": "json",
           "path": "web/package.json",
-          "jsonpath": "$.version"
-        }
-      ]
-    },
-    "piccy_node": {
-      "release-type": "rust",
-      "component": "node",
-      "extra-files": [
-        {
-          "type": "json",
-          "path": "package.json",
           "jsonpath": "$.version"
         }
       ]

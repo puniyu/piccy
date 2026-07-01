@@ -24,8 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       core: ${{ steps.release-please.outputs['piccy_core--release_created'] }}
-      app: ${{ steps.release-please.outputs['piccy_app--release_created'] }}
-      app_tag_name: ${{ steps.release-please.outputs['piccy_app--tag_name'] }}
       node: ${{ steps.release-please.outputs['piccy_node--release_created'] }}
       node_tag_name: ${{ steps.release-please.outputs['piccy_node--tag_name'] }}
     steps:
@@ -57,7 +55,6 @@ jobs:
         with:
           save-cache: true
           prefix-key: ${{ env.APP_NAME }}
-          tools: tauri-cli
 
       - name: 发布piccy_core
         run: |
@@ -65,46 +62,12 @@ jobs:
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_API_TOKEN }}
 
-  build-tauri-app:
+  build:
     needs: release
-    uses: ./.github/workflows/build-tauri-app.yaml
-    secrets: inherit
-
-
-  publish-tauri-app:
-    needs: [ build-tauri-app, release ]
-    if : needs.release.outputs.app
-    runs-on: ubuntu-latest
-    steps:
-      - name: 获取token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        id: app-token
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
-      - name: 下载构建产物
-        uses: dawidd6/action-download-artifact@ac66b43f0e6a346234dd65d4d0c8fbb31cb316e5 # v11
-        with:
-          name: ^piccy-app.*
-          name_is_regexp: true
-          skip_unpack: true
-
-      - name: 上传Release
-        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          files: |
-            piccy-app-*
-          tag_name: ${{ needs.release.outputs.app_tag_name }}
-
-  build-npm-lib:
-    if: needs.release.outputs.node
-    needs: release
-    uses: ./.github/workflows/build-npm-lib.yaml
+    uses: ./.github/workflows/build.yaml
 
   publish-npm-lib:
-    needs: [ build-npm-lib, release ]
+    needs: [ build, release ]
     if: needs.release.outputs.node
     runs-on: ubuntu-latest
     steps:
