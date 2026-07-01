@@ -82,18 +82,13 @@
       "release-type": "rust",
       "component": "core"
     },
-    "piccy_app": {
+    "piccy_node": {
       "release-type": "rust",
-      "component": "app",
+      "component": "node",
       "extra-files": [
         {
           "type": "json",
-          "path": "tauri.conf.json",
-          "jsonpath": "$.version"
-        },
-        {
-          "type": "json",
-          "path": "web/package.json",
+          "path": "package.json",
           "jsonpath": "$.version"
         }
       ]

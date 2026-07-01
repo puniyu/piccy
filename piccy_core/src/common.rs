@@ -8,7 +8,7 @@ pub(crate) fn encode_gif(frames: Vec<Frame>) -> crate::Result<Bytes> {
     {
         let mut encoder = image::codecs::gif::GifEncoder::new(&mut buffer);
         encoder.set_repeat(Repeat::Infinite)?;
-        encoder.encode_frames(frames.into_iter())?;
+        encoder.encode_frames(frames)?;
     }
     Ok(buffer.into())
 }
