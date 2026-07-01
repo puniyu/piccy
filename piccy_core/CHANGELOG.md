@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.6.0](https://github.com/puniyu/piccy/compare/core-v0.5.2...core-v0.6.0) (2026-07-01)
+
+
+### ✨ 新功能
+
+* **image:** 支持GIF格式编码和多帧图像处理 ([fa04af9](https://github.com/puniyu/piccy/commit/fa04af96c1c3421264f4fb53a13686a33ccbb97d))
+
+
+### 🐛 错误修复
+
+* 修复RGBA类型 ([f86b3b1](https://github.com/puniyu/piccy/commit/f86b3b1942a3266e389ca9a8c83ff8dbc8f5e2f5))
+
+
+### 🔧 其他更新
+
+* **deps:** update rust crates ([c3c8ffd](https://github.com/puniyu/piccy/commit/c3c8ffd73be322e0a52648f8b1b555ca5d4b813a))
+
+
+### ♻️ 代码重构
+
+* **piccy_core:** 重构错误处理和图像信息结构 ([5ddfbc5](https://github.com/puniyu/piccy/commit/5ddfbc5264285c815ce9c83f98420a1d4a46defa))
+
+
+### 🎡 持续集成
+
+* 修复release ([d8321a0](https://github.com/puniyu/piccy/commit/d8321a0295a4a99e3373574560eb11d7455a616f))
+
 ## [0.5.2](https://github.com/puniyu/piccy/compare/core-v0.5.1...core-v0.5.2) (2026-03-18)
 
 
