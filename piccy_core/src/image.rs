@@ -218,7 +218,7 @@ impl Image {
             &image,
             angle.to_radians(),
             imageproc::geometric_transformations::Interpolation::Bilinear,
-            image::Rgba([0, 0, 0, 0]),
+            imageproc::geometric_transformations::Border::Constant(image::Rgba([0, 0, 0, 0])),
         );
 
         let mut buffer = Vec::new();
