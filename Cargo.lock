@@ -962,7 +962,7 @@ checksum = "35fb2e5f958ec131621fdd531e9fc186ed768cbe395337403ae56c17a74c68ec"
 
 [[package]]
 name = "piccy_core"
-version = "0.5.2"
+version = "0.6.0"
 dependencies = [
  "base64",
  "bytes",
@@ -975,7 +975,7 @@ dependencies = [
 
 [[package]]
 name = "piccy_node"
-version = "0.5.2"
+version = "0.6.0"
 dependencies = [
  "image",
  "napi",
