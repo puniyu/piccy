@@ -24,7 +24,7 @@ jobs:
 
       - name: 构建
         id: build
-        uses: puniyu/napi-build-action@c851380443f3e6ee1431993f6b58196c450a7388 # main
+        uses: puniyu/napi-build-action@f883c5127e81f54efd9abbe2f4f4f0ab5a5195b1 # main
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
@@ -55,7 +55,7 @@ jobs:
 
       - name: 构建
         id: build
-        uses: puniyu/napi-build-action@c851380443f3e6ee1431993f6b58196c450a7388 # main
+        uses: puniyu/napi-build-action@f883c5127e81f54efd9abbe2f4f4f0ab5a5195b1 # main
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
@@ -89,7 +89,7 @@ jobs:
 
       - name: 构建
         id: build
-        uses: puniyu/napi-build-action@c851380443f3e6ee1431993f6b58196c450a7388 # main
+        uses: puniyu/napi-build-action@f883c5127e81f54efd9abbe2f4f4f0ab5a5195b1 # main
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
@@ -119,7 +119,7 @@ jobs:
 
       - name: 构建
         id: build
-        uses: puniyu/napi-build-action@c851380443f3e6ee1431993f6b58196c450a7388 # main
+        uses: puniyu/napi-build-action@f883c5127e81f54efd9abbe2f4f4f0ab5a5195b1 # main
         with:
           target: ${{ matrix.platform.target }}
           cwdDir: ${{ env.APP_PATH }}
