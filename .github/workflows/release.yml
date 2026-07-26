@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@f5e7448bce67a5c83ac1d9a679fbaa1b1536c167 # main
+        uses: puniyu/setup-rust@78399f47a3cf6569cab2feba8563aaccbfe98f9c # main
         with:
           save-cache: true
           prefix-key: ${{ env.APP_NAME }}
