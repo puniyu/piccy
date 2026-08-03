@@ -30,7 +30,7 @@ jobs:
           prefix-key: ${{ env.APP_NAME }}
 
       - name: 设置 Nodejs
-        uses: puniyu/setup-node@af0f53e773ab16523ac167460cb4e95daae92550 # main
+        uses: puniyu/setup-node@487ded571972c36333a74ed703796cec3e6cca09 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -73,7 +73,7 @@ jobs:
           prefix-key: ${{ env.APP_NAME }}
 
       - name: 设置 Nodejs
-        uses: puniyu/setup-node@af0f53e773ab16523ac167460cb4e95daae92550 # main
+        uses: puniyu/setup-node@487ded571972c36333a74ed703796cec3e6cca09 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -119,7 +119,7 @@ jobs:
           prefix-key: ${{ env.APP_NAME }}
 
       - name: 设置 Nodejs
-        uses: puniyu/setup-node@af0f53e773ab16523ac167460cb4e95daae92550 # main
+        uses: puniyu/setup-node@487ded571972c36333a74ed703796cec3e6cca09 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -160,7 +160,7 @@ jobs:
           prefix-key: ${{ env.APP_NAME }}
 
       - name: 设置 Nodejs
-        uses: puniyu/setup-node@af0f53e773ab16523ac167460cb4e95daae92550 # main
+        uses: puniyu/setup-node@487ded571972c36333a74ed703796cec3e6cca09 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
