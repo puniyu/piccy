@@ -43,7 +43,7 @@ jobs:
         working-directory: ${{ env.APP_PATH }}
 
       - name: 上传构建产物
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "${{ env.APP_NAME }}-node-${{ matrix.platform.label }}"
           path: |
@@ -86,7 +86,7 @@ jobs:
         working-directory: ${{ env.APP_PATH }}
 
       - name: 上传构建产物
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "${{ env.APP_NAME }}-node-${{ matrix.platform.label }}"
           path: |
@@ -132,7 +132,7 @@ jobs:
         working-directory: ${{ env.APP_PATH }}
 
       - name: 上传构建产物
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "${{ env.APP_NAME }}-node-${{ matrix.platform.label }}"
           path: |
@@ -173,7 +173,7 @@ jobs:
         working-directory: ${{ env.APP_PATH }}
 
       - name: 上传构建产物
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "${{ env.APP_NAME }}-node-${{ matrix.platform.label }}"
           path: |
@@ -181,7 +181,7 @@ jobs:
 
 
       - name: 上传npm包
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "npm-package"
           path: |
@@ -190,7 +190,7 @@ jobs:
             ${{ env.APP_PATH }}/package.json      
 
       - name: 上传wasm包
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: "npm-wasm"
           path: |
