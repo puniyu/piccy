@@ -23,14 +23,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@d770975898c11cceab303c7c50aac90603a43d13 # main
+        uses: puniyu/setup-rust@8257508392c7e6d0f3c66345983df604cd572181 # main
         with:
           target: ${{ matrix.platform.target }}
           cache: true
           prefix-key: ${{ env.APP_NAME }}
 
       - name: 设置 Nodejs
-        uses: puniyu/setup-node@342dbffc32e1f50f8d9660e64bb23102db87570c # main
+        uses: puniyu/setup-node@82edbf1086f651d2110bf167717fcac63d535563 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -66,14 +66,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@d770975898c11cceab303c7c50aac90603a43d13 # main
+        uses: puniyu/setup-rust@8257508392c7e6d0f3c66345983df604cd572181 # main
         with:
           target: ${{ matrix.platform.target }}
           cache: true
           prefix-key: ${{ env.APP_NAME }}
 
       - name: 设置 Nodejs
-        uses: puniyu/setup-node@342dbffc32e1f50f8d9660e64bb23102db87570c # main
+        uses: puniyu/setup-node@82edbf1086f651d2110bf167717fcac63d535563 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -112,14 +112,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@d770975898c11cceab303c7c50aac90603a43d13 # main
+        uses: puniyu/setup-rust@8257508392c7e6d0f3c66345983df604cd572181 # main
         with:
           target: ${{ matrix.platform.target }}
           cache: true
           prefix-key: ${{ env.APP_NAME }}
 
       - name: 设置 Nodejs
-        uses: puniyu/setup-node@342dbffc32e1f50f8d9660e64bb23102db87570c # main
+        uses: puniyu/setup-node@82edbf1086f651d2110bf167717fcac63d535563 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
@@ -153,14 +153,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: 设置 rust
-        uses: puniyu/setup-rust@d770975898c11cceab303c7c50aac90603a43d13 # main
+        uses: puniyu/setup-rust@8257508392c7e6d0f3c66345983df604cd572181 # main
         with:
           target: ${{ matrix.platform.target }}
           cache: true
           prefix-key: ${{ env.APP_NAME }}
 
       - name: 设置 Nodejs
-        uses: puniyu/setup-node@342dbffc32e1f50f8d9660e64bb23102db87570c # main
+        uses: puniyu/setup-node@82edbf1086f651d2110bf167717fcac63d535563 # main
         with:
           node-version: lts/*
           pnpm-version: 10.25.0
